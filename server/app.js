@@ -18,6 +18,8 @@
 	
 	app.use (bodyParser.json ());
 
+  app.use(express.static(path.join(__dirname, '../client')));
+
 	app.use ('/', routes);
 		
 	var server = app.listen (3010, function () {

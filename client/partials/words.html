@@ -1,0 +1,51 @@
+<ul class="nav nav-tabs">
+	<li role="presentation" ng-repeat="level in levels"	ng-click="getLevel(level)" ng-class="{active: selectedLevel === level}">
+		<a>{{level | uppercase}}</a>
+	</li>
+</ul>
+<table class="table" ng-show="words.length">
+	<tr>
+		<th ng-show="selectedLevel === 'all'">
+			Level
+		</th>
+		<th>
+			Index
+		</th>
+		<th>
+			Word
+		</th>
+		<th>
+			Yomigana
+		</th>
+		<th>
+			Meaning
+		</th>
+		<th>
+		</th>
+	</tr>
+	<tr ng-repeat="word in words">
+		<td ng-show="selectedLevel === 'all'">
+			{{word.Level}}
+		</td>
+		<td>
+			{{word.index}}
+		</td>
+		<td>
+			{{word.word}}
+		</td>
+		<td>
+			<span ng-hide="word.inEdit">{{word.yomigana}}</span>
+			<input class="form-control" ng-model="word.yomigana" ng-show="word.inEdit" />
+		</td>
+		<td>
+			<span ng-hide="word.inEdit">{{word.meaning}}</span>
+			<input class="form-control" ng-model="word.meaning" ng-show="word.inEdit" />
+		</td>
+		<td>
+			<span class="label label-success" ng-click="beginEdit(word)" ng-hide="word.inEdit">edit</span>
+			<span class="label label-default" ng-click="cancel(word)" ng-show="word.inEdit">cancel</span>
+			<br ng-show="word.inEdit"/>
+			<span class="label label-danger" ng-click="commit(word)" ng-show="word.inEdit">commit</span>
+		</td>
+	</tr>
+</table>

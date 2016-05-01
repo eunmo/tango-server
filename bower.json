@@ -1,0 +1,11 @@
+{
+  "name": "tango",
+  "version": "1.0.0",
+  "description": "Tango Management",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "angular": "~1.5.5",
+    "angular-route": "~1.5.5"
+  }
+}
