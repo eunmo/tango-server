@@ -1,9 +1,61 @@
 tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http) {
 
+	$scope.meta = [];
+	$scope.streaks = [];
 	$scope.levels = [];	
 	$scope.words = [];
 	$scope.orderBy = '';
 	$scope.order = 0;
+
+	function fixDate (date, streak) {
+		var baseDate = new Date (date);
+		var dateOffset = baseDate.getDate () + streak;
+
+		if (baseDate.getHours() < 5) {
+			dateOffset -= 1;
+		}
+
+		baseDate.setDate(dateOffset);
+		return new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+	}
+
+	for (var i = 0; i < 10; i++) {
+		$scope.streaks[i] = 0;
+	}
+
+	$http.get ('meta').success (function (data) {
+		var i;
+		var now = new Date();
+
+		for (i = 0; i <= 10; i++) {
+			var newDate = fixDate (new Date (now), 0);
+			newDate.setDate (newDate.getDate() + i);
+			var streaks = [];
+
+			for (var j = 0; j < Math.min(10, 11 - i); j++) {
+				streaks.push (0);
+			}
+
+			$scope.meta[i] = {
+				date: newDate,
+				streaks: streaks,
+				sum: 0
+			};
+		}
+
+		for (var i in data) {
+			var row = data[i];
+			var streak = row.streak;
+			var lastCorrect = new Date (row.lastCorrect);
+			var testDay = fixDate (lastCorrect, streak);
+			var now = fixDate (new Date (), 0);
+			var index = (testDay - now) / 86400000;
+
+			$scope.meta[index].streaks[10 - streak] += 1;
+			$scope.meta[index].sum += 1;
+			$scope.streaks[10 - streak] += 1;
+		}
+	});
 
 	$http.get ('select/levels').success (function (data) {
 		$scope.levels = data;

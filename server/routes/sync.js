@@ -22,7 +22,7 @@
 						{ $set: {
 								learned: word.learned,
 								streak: word.streak,
-								lastLearned: word.lastLearned
+								lastCorrect: word.lastCorrect
 							}
 						}
 					);
