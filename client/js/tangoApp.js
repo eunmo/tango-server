@@ -2,6 +2,10 @@ tangoApp = angular.module ('tangoApp', ['ngRoute'])
 .config (function ($routeProvider) {
 	$routeProvider
 	.when ('/', {
+		templateUrl: '/partials/meta.html',
+		controller: 'MetaCtrl'
+	})
+	.when ('/level/:level', {
 		templateUrl: '/partials/words.html',
 		controller: 'WordCtrl'
 	})

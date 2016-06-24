@@ -1,36 +1,3 @@
-<div class="row">
-	<div class="col-md-6 col-md-offset-3">
-		<table class="table table-bordered" ng-show="meta.length">
-			<tr>
-				<th class="text-right">
-					Test day
-				</th>
-				<th class="text-right">
-					Sum
-				</th>
-				<th class="text-right" ng-repeat="streak in streaks">
-					{{streak}}
-				</th>
-			</tr>
-			<tr ng-repeat="day in meta">
-				<td class="text-right">
-					{{day.date | date : 'EEE, MMM dd'}}
-				</td>
-				<td class="text-right">
-					<b>{{day.sum}}</b>
-				</td>
-				<td class="text-right" ng-repeat="streak in day.streaks track by $index">
-					<span ng-show="streak">{{streak}}</span>
-				</td>
-			</tr>
-		</table>
-	</div>
-</div>
-<ul class="nav nav-tabs">
-	<li role="presentation" ng-repeat="level in levels"	ng-click="getLevel(level)" ng-class="{active: selectedLevel === level}">
-		<a>{{level | uppercase}}</a>
-	</li>
-</ul>
 <table class="table" ng-show="words.length">
 	<tr>
 		<th ng-show="selectedLevel === 'all'">

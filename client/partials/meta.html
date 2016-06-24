@@ -1,0 +1,28 @@
+<div class="row">
+	<div class="col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+		<table class="table table-bordered" ng-show="meta.length">
+			<tr>
+				<th class="text-right">
+					Test day
+				</th>
+				<th class="text-right">
+					Sum
+				</th>
+				<th class="text-right" ng-repeat="streak in streaks track by $index">
+					{{streak}}
+				</th>
+			</tr>
+			<tr ng-repeat="day in meta">
+				<td class="text-right">
+					{{day.date | date : 'EEE, MMM dd'}}
+				</td>
+				<td class="text-right">
+					<b>{{day.sum}}</b>
+				</td>
+				<td class="text-right" ng-repeat="streak in day.streaks track by $index">
+					<span ng-show="streak">{{streak}}</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

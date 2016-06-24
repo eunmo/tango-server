@@ -1,11 +1,18 @@
-tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http) {
+tangoApp.controller ('NavCtrl', function ($rootScope, $scope, $http) {
+	
+	$scope.levels = [];	
+
+	$http.get ('select/levels').success (function (data) {
+		$scope.levels = data;
+		$scope.levels.push ('all');
+	});
+});
+
+tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 
 	$scope.meta = [];
 	$scope.streaks = [];
 	$scope.levels = [];	
-	$scope.words = [];
-	$scope.orderBy = '';
-	$scope.order = 0;
 
 	function fixDate (date, streak) {
 		var baseDate = new Date (date);
@@ -17,10 +24,6 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http) {
 
 		baseDate.setDate(dateOffset);
 		return new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-	}
-
-	for (var i = 0; i < 10; i++) {
-		$scope.streaks[i] = 0;
 	}
 
 	$http.get ('meta').success (function (data) {
@@ -42,46 +45,44 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http) {
 				sum: 0
 			};
 		}
+	
+		for (var i = 0; i < 10; i++) {
+			$scope.streaks[i] = 0;
+		}
 
 		for (var i in data) {
 			var row = data[i];
-			var streak = row.streak;
-			var lastCorrect = new Date (row.lastCorrect);
-			var testDay = fixDate (lastCorrect, streak);
+			var streak = Math.max(row.streak, 1);
+			var testDay = fixDate (row.lastCorrect, streak);
 			var now = fixDate (new Date (), 0);
 			var index = (testDay - now) / 86400000;
 
+			$scope.streaks[10 - streak] += 1;
 			$scope.meta[index].streaks[10 - streak] += 1;
 			$scope.meta[index].sum += 1;
-			$scope.streaks[10 - streak] += 1;
 		}
 	});
+});
 
-	$http.get ('select/levels').success (function (data) {
-		$scope.levels = data;
-		$scope.levels.push ('all');
-	});
+tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
 
-	$scope.getLevel = function (level) {
-		$scope.words = [];
-		$scope.selectedLevel = level;
-		$scope.order = 2;
-		$scope.changeOrderBy ();
+	$scope.words = [];
+	$scope.orderBy = '';
+	$scope.order = 0;
 
-		$http.get ('select/' + level).success (function (data) {
-			$scope.words = data;
+	$http.get ('select/' + $routeParams.level).success (function (data) {
+		$scope.words = data;
 
-			for (var i in $scope.words) {
-				var word = $scope.words[i];
+		for (var i in $scope.words) {
+			var word = $scope.words[i];
 
-				if (word.streak <= 0) {
-					word.minus = true;
-				} else if (word.streak > 10) {
-					word.done = true;
-				}
+			if (word.streak <= 0) {
+				word.minus = true;
+			} else if (word.streak > 10) {
+				word.done = true;
 			}
-		});
-	};
+		}
+	});
 
 	$scope.beginEdit = function (word) {
 		word.inEdit = true;
