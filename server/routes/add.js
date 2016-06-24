@@ -8,11 +8,11 @@
 		router.put ('/add', function (req, res) {
 			var words = req.body;
 
-			db.words.find ({ Level: 'N0' }).sort ({ index: 1 }).limit(1, function (err, data) {
+			db.words.find ({ Level: 'N0' }).sort ({ index: -1 }).limit(1, function (err, data) {
 				var baseIndex = 1;
 
 				if (data.length > 0) {
-					baseIndex = data[0].index;
+					baseIndex = data[0].index + 1;
 				}
 
 				for (var i in words) {
