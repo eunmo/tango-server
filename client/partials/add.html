@@ -1,0 +1,20 @@
+<h1>
+	New words for N0
+	<button class="btn btn-default pull-right" ng-click="newLine()">New Line</button>
+</h1>
+<form class="form-horizontal">
+	<div class="form-group" ng-repeat="word in words">
+		<label class="col-sm-1 control-label">{{$index + 1}}</label>
+		<div class="col-sm-2">
+			<input type="text" class="form-control" ng-model="word.word" placeholder="word">
+		</div>
+		<div class="col-sm-2">
+			<input type="text" class="form-control" ng-model="word.yomigana" placeholder="yomigana">
+		</div>
+		<div class="col-sm-6">
+			<input type="text" class="form-control" ng-model="word.meaning" placeholder="meaning">
+		</div>
+	</div>
+</form>
+<button class="btn btn-default" ng-click="submit()">Submit</button>
+<button class="btn btn-default" ng-click="newLine()">New Line</button>

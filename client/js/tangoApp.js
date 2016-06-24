@@ -5,6 +5,10 @@ tangoApp = angular.module ('tangoApp', ['ngRoute'])
 		templateUrl: '/partials/meta.html',
 		controller: 'MetaCtrl'
 	})
+	.when ('/add', {
+		templateUrl: '/partials/add.html',
+		controller: 'AddCtrl'
+	})
 	.when ('/level/:level', {
 		templateUrl: '/partials/words.html',
 		controller: 'WordCtrl'

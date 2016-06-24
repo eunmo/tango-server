@@ -46,15 +46,15 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 			};
 		}
 	
-		for (var i = 0; i < 10; i++) {
+		for (i = 0; i < 10; i++) {
 			$scope.streaks[i] = 0;
 		}
 
-		for (var i in data) {
+		for (i in data) {
 			var row = data[i];
 			var streak = Math.max(row.streak, 1);
 			var testDay = fixDate (row.lastCorrect, streak);
-			var now = fixDate (new Date (), 0);
+			now = fixDate (new Date (), 0);
 			var index = (testDay - now) / 86400000;
 
 			$scope.streaks[10 - streak] += 1;
@@ -112,6 +112,36 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routePara
 			$scope.orderBy = ['-learned', 'streak'];
 		} else {
 			$scope.orderBy = ['-learned', '-streak'];
+		}
+	};
+});
+
+tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) {
+
+	$scope.words = [];
+
+	$scope.newLine = function () {
+		$scope.words.push ({ word: '', yomigana: '', meaning: '' });
+	};
+
+	$scope.newLine ();
+
+	$scope.submit = function () {
+		var words = [];
+
+		for (var i in $scope.words) {
+			var word = $scope.words[i];
+
+			if (word.word !== '') {
+				words.push (word);
+			}
+		}
+
+		if (words.length > 0) {
+			$http.put('add', words)
+				.then (function (res) {
+					$location.url ('/');
+				});
 		}
 	};
 });
