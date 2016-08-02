@@ -57,9 +57,11 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 			now = fixDate (new Date (), 0);
 			var index = (testDay - now) / 86400000;
 
-			$scope.streaks[10 - streak] += 1;
-			$scope.meta[index].streaks[10 - streak] += 1;
-			$scope.meta[index].sum += 1;
+			if (index >= 0) {
+				$scope.streaks[10 - streak] += 1;
+				$scope.meta[index].streaks[10 - streak] += 1;
+				$scope.meta[index].sum += 1;
+			}
 		}
 	});
 });
