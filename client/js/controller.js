@@ -147,3 +147,25 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) 
 		}
 	};
 });
+
+tangoApp.controller ('SearchCtrl', function ($rootScope, $scope, $http) {
+	
+	$scope.query = "";
+	$scope.words = [];
+
+	$scope.search = function () {
+		$http.get ('search/' + $scope.query).success (function (data) {
+			$scope.words = data;
+
+			for (var i in $scope.words) {
+				var word = $scope.words[i];
+
+				if (word.streak <= 0) {
+					word.minus = true;
+				} else if (word.streak > 10) {
+					word.done = true;
+				}
+			}
+		});
+	};
+});
