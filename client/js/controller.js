@@ -128,6 +128,15 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) 
 
 	$scope.newLine ();
 
+	$scope.newWordInput = function (word) {
+		var index = word.word.indexOf('[');
+
+		if (index !== -1) {
+			word.yomigana = word.word.substr (0, index).trim ();
+			word.word = word.word.substr (index + 1).replace (']', '').trim ();
+		}
+	};
+
 	$scope.newWordAdded = function (index) {
 		if ($scope.words.length === index + 1) {
 			$scope.newLine ();

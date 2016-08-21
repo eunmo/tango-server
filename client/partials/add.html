@@ -6,7 +6,7 @@
 	<div class="form-group" ng-repeat="word in words">
 		<label class="col-sm-1 control-label">{{$index + 1}}</label>
 		<div class="col-sm-2">
-			<input type="text" class="form-control" ng-model="word.word" placeholder="word">
+			<input type="text" class="form-control" ng-model="word.word" placeholder="word" ng-change="newWordInput(word)">
 		</div>
 		<div class="col-sm-2">
 			<input type="text" class="form-control" ng-model="word.yomigana" placeholder="yomigana">
