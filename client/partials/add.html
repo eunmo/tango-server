@@ -1,7 +1,6 @@
 <search></search>
 <h1>
 	New words for N0
-	<button class="btn btn-default pull-right" ng-click="newLine()">New Line</button>
 </h1>
 <form class="form-horizontal">
 	<div class="form-group" ng-repeat="word in words">
@@ -13,7 +12,7 @@
 			<input type="text" class="form-control" ng-model="word.yomigana" placeholder="yomigana">
 		</div>
 		<div class="col-sm-6">
-			<input type="text" class="form-control" ng-model="word.meaning" placeholder="meaning">
+			<input type="text" class="form-control" ng-model="word.meaning" placeholder="meaning" ng-change="newWordAdded($index)">
 		</div>
 	</div>
 </form>

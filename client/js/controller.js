@@ -128,6 +128,12 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) 
 
 	$scope.newLine ();
 
+	$scope.newWordAdded = function (index) {
+		if ($scope.words.length === index + 1) {
+			$scope.newLine ();
+		}
+	};
+
 	$scope.submit = function () {
 		var words = [];
 
