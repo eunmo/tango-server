@@ -9,8 +9,10 @@ tangoApp.directive('search', function () {
 	return {
 		restrict: 'E',
 		transclude: true,
-		scope: {},
-		controller: ['$scope', '$http', function SearchCtrl ($scope, $http) {
+		scope: { expire: '=' },
+		controller: ['$scope', '$http', '$timeout', function SearchCtrl ($scope, $http, $timeout) {
+			$scope.timeout = null;
+
 			$scope.search = function () {
 				$http.get ('search/' + $scope.query).success (function (data) {
 					$scope.words = data;
@@ -24,7 +26,31 @@ tangoApp.directive('search', function () {
 							word.done = true;
 						}
 					}
+					
+					if ($scope.expire) {
+						$scope.cancelTimeout ();	
+						$scope.timeout = $timeout (function () { $scope.clear (true) }, 10000);
+					}
 				});
+			};
+
+			$scope.cancelTimeout = function () {
+				if ($scope.timeout !== null) {
+					$timeout.cancel ($scope.timeout);
+					$scope.timeout = null;
+				}
+			}
+
+			$scope.clear = function (byTimeout) {
+				$scope.query = "";
+				$scope.words = [];
+				
+				if (byTimeout) {
+					$scope.timeout = null;
+				}
+				else {
+					$scope.cancelTimeout ();
+				}
 			};
 
 			$scope.beginEdit = function (word) {
@@ -37,14 +63,7 @@ tangoApp.directive('search', function () {
 
 			$scope.commit = function (word) {
 				$http.put ('update/word', word)
-					.then (function (res) {
-						word.inEdit = false;
-					});
-			};
-
-			$scope.clear = function () {
-				$scope.query = "";
-				$scope.words = [];
+					.then ($scope.cancel);
 			};
 
 			$scope.clear ();
