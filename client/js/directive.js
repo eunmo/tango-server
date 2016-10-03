@@ -29,7 +29,7 @@ tangoApp.directive('search', function () {
 					
 					if ($scope.expire) {
 						$scope.cancelTimeout ();	
-						$scope.timeout = $timeout (function () { $scope.clear (true) }, 10000);
+						$scope.timeout = $timeout (function () { $scope.clear (true); }, 10000);
 					}
 				});
 			};
@@ -39,7 +39,7 @@ tangoApp.directive('search', function () {
 					$timeout.cancel ($scope.timeout);
 					$scope.timeout = null;
 				}
-			}
+			};
 
 			$scope.clear = function (byTimeout) {
 				$scope.query = "";

@@ -1,6 +1,38 @@
 <div class="row">
 	<div class="col-md-8 col-md-offset-2">
-		<table class="table table-bordered" ng-show="meta.length">
+		<table class="table table-bordered table-condensed" ng-show="levels.length">
+			<tr>
+				<th class="text-right">
+					Lv
+				</th>
+				<th class="text-right">
+					new
+				</th>
+				<th ng-repeat="streak in levels[0].streaks track by $index" class="text-right">
+					{{$index}}
+				</th>
+				<th class="text-right">
+					total
+				</th>
+			</tr>
+			<tr ng-repeat="level in levels" class="text-right">
+				<td>
+					<b>{{level.name}}</b>
+				</td>
+				<td>
+					{{level.toLearn | hideZero}}
+				</td>
+				<td ng-repeat="streak in level.streaks track by $index">
+					{{streak | hideZero}}
+				</td>
+				<td>
+					<b>{{level.total}}</b>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="col-md-8 col-md-offset-2">
+		<table class="table table-bordered table-condensed" ng-show="meta.length">
 			<tr>
 				<th class="text-right">
 					Test day
@@ -12,15 +44,15 @@
 					{{streak}}
 				</th>
 			</tr>
-			<tr ng-repeat="day in meta">
-				<td class="text-right">
+			<tr ng-repeat="day in meta" class="text-right">
+				<td>
 					{{day.date | date : 'EEE, MMM dd'}}
 				</td>
-				<td class="text-right">
+				<td>
 					<b>{{day.sum}}</b>
 				</td>
-				<td class="text-right" ng-repeat="streak in day.streaks track by $index">
-					<span ng-show="streak">{{streak}}</span>
+				<td ng-repeat="streak in day.streaks track by $index">
+					{{streak | hideZero}}
 				</td>
 			</tr>
 		</table>

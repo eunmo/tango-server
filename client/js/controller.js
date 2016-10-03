@@ -64,6 +64,45 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 			}
 		}
 	});
+
+	$http.get ('level_summary').success (function (data) {
+		var i, j;
+		var row;
+		var level_index;
+
+		var max_level = 0;
+		for (i in data) {
+			row = data[i];
+			level_index = parseInt (row.Level[1]);
+			if (max_level < level_index) {
+				max_level = level_index;
+			}
+		}
+
+		var level;
+		for (i = 0; i <= max_level; i++) {
+			level = { name: 'N' + i, streaks: [], toLearn: 0, total: 0 };
+			for (j = 0; j <= 11; j++) {
+				level.streaks[j] = 0;
+			}
+			$scope.levels[i] = level;
+		}
+
+		for (i in data) {
+			row = data[i];
+			level_index = parseInt (row.Level[1]);
+			level = $scope.levels[level_index];
+
+			if (row.learned) {
+				level.streaks[Math.max(row.streak, 0)] += row.count;
+			}
+			else {
+				level.toLearn += row.count;
+			}
+
+			level.total += row.count;
+		}
+	});
 });
 
 tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
