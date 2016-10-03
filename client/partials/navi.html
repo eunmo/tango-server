@@ -14,9 +14,13 @@
 		<ul class="nav navbar-nav">
 			<li><a href="#/add">Add Word</a></li>
 			<li><a href="#/search">Search</a></li>
-			<li ng-repeat="level in levels">
-				<a href="#/level/{{level}}">{{level | uppercase}}</a>
-			</li>
+			<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Levels <span class="caret"></span></a>
+			<ul class="dropdown-menu">
+				<li ng-repeat="level in levels">
+					<a href="#/level/{{level}}">{{level | uppercase}}</a>
+				</li>
+			</ul>
 		</ul>
 	</div>
 </div>
