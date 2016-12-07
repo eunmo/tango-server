@@ -17,15 +17,17 @@
 				for (i in input) {
 					word = input[i];
 
-					db.words.update (
-						{ Level: word.Level, index: word.index },
-						{ $set: {
-								learned: word.learned,
-								streak: word.streak,
-								lastCorrect: new Date (word.lastCorrect)
+					if (word.learned && word.streak > 0) {
+						db.words.update (
+							{ Level: word.Level, index: word.index },
+							{ $set: {
+									learned: word.learned,
+									streak: word.streak,
+									lastCorrect: new Date (word.lastCorrect)
+								}
 							}
-						}
-					);
+						);
+					}
 				}
 			});
 		});

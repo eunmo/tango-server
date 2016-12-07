@@ -13,6 +13,8 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 	$scope.meta = [];
 	$scope.streaks = [];
 	$scope.levels = [];	
+	$scope.newWordCount = 0;
+	$scope.selectedLevel = '';
 
 	function fixDate (date, streak) {
 		var baseDate = new Date (date);
@@ -36,7 +38,7 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 			var streaks = [];
 
 			for (var j = 0; j < Math.min(10, 11 - i); j++) {
-				streaks.push (0);
+				streaks.push ({ sum: 0, levels: {}});
 			}
 
 			$scope.meta[i] = {
@@ -59,8 +61,14 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 
 			if (index >= 0) {
 				$scope.streaks[10 - streak] += 1;
-				$scope.meta[index].streaks[10 - streak] += 1;
+				$scope.meta[index].streaks[10 - streak].sum += 1;
 				$scope.meta[index].sum += 1;
+
+				if ($scope.meta[index].streaks[10 - streak].levels[row.Level] === undefined) {
+					$scope.meta[index].streaks[10 - streak].levels[row.Level] = 0;
+				}
+
+				$scope.meta[index].streaks[10 - streak].levels[row.Level] += 1;
 			}
 		}
 	});
@@ -81,8 +89,8 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 
 		var level;
 		for (i = 0; i <= max_level; i++) {
-			level = { name: 'N' + i, streaks: [], toLearn: 0, total: 0 };
-			for (j = 0; j <= 11; j++) {
+			level = { name: 'N' + i, streaks: [], learned: 0, total: 0 };
+			for (j = 0; j < 10; j++) {
 				level.streaks[j] = 0;
 			}
 			$scope.levels[i] = level;
@@ -94,15 +102,29 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 			level = $scope.levels[level_index];
 
 			if (row.learned) {
-				level.streaks[Math.max(row.streak, 0)] += row.count;
+				if (row.streak === 11) {
+					level.learned += row.count;
+				}
+				else {
+					level.streaks[10 - Math.max(row.streak, 1)] += row.count;
+				}
 			}
 			else {
-				level.toLearn += row.count;
+				$scope.newWordCount += row.count;
 			}
 
 			level.total += row.count;
 		}
 	});
+
+	$scope.selectLevel = function (level) {
+		if ($scope.selectedLevel === level) {
+			$scope.selectedLevel = '';
+		}
+		else {
+			$scope.selectedLevel = level;
+		}
+	};
 });
 
 tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
@@ -157,6 +179,44 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routePara
 	};
 });
 
+tangoApp.controller ('CleanupCtrl', function ($rootScope, $scope, $http, $routeParams) {
+
+	$scope.words = [];
+	$scope.orderBy = '';
+	$scope.order = 0;
+	$scope.selectedLevel = 'all';
+
+	$http.get ('select/cleanup').success (function (data) {
+		$scope.words = data;
+
+		for (var i in $scope.words) {
+			var word = $scope.words[i];
+
+			if (word.streak <= 0) {
+				word.minus = true;
+			} else if (word.streak > 10) {
+				word.done = true;
+			}
+		}
+	});
+
+	$scope.changeOrderBy = function () {
+		$scope.order = ($scope.order + 1) % 3;
+		if ($scope.order === 0) {
+
+			if ($scope.Selectedlevel === 'all') {
+				$scope.orderBy = 'Level, index';
+			} else {
+				$scope.orderBy = 'index';
+			}
+		} else if ($scope.order === 1) {
+			$scope.orderBy = ['-learned', 'streak'];
+		} else {
+			$scope.orderBy = ['-learned', '-streak'];
+		}
+	};
+});
+
 tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) {
 
 	$scope.words = [];
@@ -175,14 +235,6 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) 
 			word.word = word.word.substr (index + 1).replace (']', '').trim ();
 		}
 	};
-
-	/*
-	$scope.newWordAdded = function (index) {
-		if ($scope.words.length === index + 1) {
-			$scope.newLine ();
-		}
-	};
-	*/
 
 	$scope.submit = function () {
 		var words = [];

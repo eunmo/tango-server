@@ -16,6 +16,10 @@ tangoApp = angular.module ('tangoApp', ['ngRoute'])
 		templateUrl: '/partials/words.html',
 		controller: 'WordCtrl'
 	})
+	.when ('/cleanup', {
+		templateUrl: '/partials/words.html',
+		controller: 'CleanupCtrl'
+	})
 	.otherwise ({
 		redirectTo: '/'
   });

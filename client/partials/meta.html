@@ -1,58 +1,49 @@
 <div class="row">
+	<h1 class="col-md-8 col-md-offset-2" ng-show="newWordCount">
+		{{newWordCount}} <small>new word<span ng-show="newWordCount > 1">s</span></small>
+	</h1>
 	<div class="col-md-8 col-md-offset-2">
-		<table class="table table-bordered table-condensed" ng-show="levels.length">
-			<tr>
-				<th class="text-right">
-					Lv
-				</th>
-				<th class="text-right">
-					new
-				</th>
-				<th ng-repeat="streak in levels[0].streaks track by $index" class="text-right">
-					{{$index}}
-				</th>
-				<th class="text-right">
-					total
-				</th>
-			</tr>
-			<tr ng-repeat="level in levels" class="text-right">
-				<td>
-					<b>{{level.name}}</b>
+		<table class="table table-bordered table-condensed" ng-show="meta.length">
+			<tr ng-repeat="level in levels | orderBy: '-name'" class="text-right">
+				<td class="hidden-xs">
+					{{level.name}}
 				</td>
-				<td>
-					{{level.toLearn | hideZero}}
+				<td class="inverted" ng-click="selectLevel(level.name)">
+					{{level.total - level.learned}}
 				</td>
 				<td ng-repeat="streak in level.streaks track by $index">
 					{{streak | hideZero}}
 				</td>
+			</tr>
+			<tr class="inverted text-right">
+				<td class="hidden-xs">
+					Test day
+				</td>
 				<td>
-					<b>{{level.total}}</b>
+					Sum
+				</td>
+				<td ng-repeat="streak in streaks track by $index">
+					{{streak}}
+				</td>
+			</tr>
+			<tr ng-repeat="day in meta" ng-show="day.sum" class="text-right">
+				<td class="hidden-xs">
+					{{day.date | date : 'EEE, MMM dd'}}
+				</td>
+				<td class="inverted">
+					{{day.sum}}
+				</td>
+				<td ng-repeat="streak in day.streaks track by $index">
+					<span ng-show="streak.levels[selectedLevel]"><b>{{streak.levels[selectedLevel] | hideZero}}</b>/</span>{{streak.sum | hideZero}}
 				</td>
 			</tr>
 		</table>
 	</div>
-	<div class="col-md-8 col-md-offset-2">
-		<table class="table table-bordered table-condensed" ng-show="meta.length">
+	<div class="col-md-8 col-md-offset-2 hidden-xs">
+		<table class="table table-condensed" ng-show="levels.length">
 			<tr>
-				<th class="text-right hidden-xs">
-					Test day
-				</th>
-				<th class="text-right">
-					Sum
-				</th>
-				<th class="text-right" ng-repeat="streak in streaks track by $index">
-					{{streak}}
-				</th>
-			</tr>
-			<tr ng-repeat="day in meta" class="text-right">
-				<td class="hidden-xs">
-					{{day.date | date : 'EEE, MMM dd'}}
-				</td>
-				<td>
-					<b>{{day.sum}}</b>
-				</td>
-				<td ng-repeat="streak in day.streaks track by $index">
-					{{streak | hideZero}}
+				<td ng-repeat="level in levels" ng-click="selectLevel(level.name)">
+					<h3><small>{{level.name}}</small> {{level.total - level.learned}}<small>/{{level.total}}</small></h3>
 				</td>
 			</tr>
 		</table>
