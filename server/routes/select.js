@@ -17,7 +17,7 @@
 		
 		router.get ('/select/cleanup', function (req, res) {
 			db.words
-				.find ({ Level: { $in: [ 'N5', 'N4' ] }, streak: { $lte: 1 }})
+				.find ({ Level: { $ne: 'N0' }, streak: { $lte: 1 }})
 				.sort ({ Level: 1, index: 1 }, function (err, data) {
 					res.json (data);
 				});

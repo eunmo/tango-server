@@ -228,11 +228,17 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) 
 	$scope.newLine ();
 
 	$scope.newWordInput = function (word) {
-		var index = word.word.indexOf('[');
+		var sqIndex = word.word.indexOf('[');
 
-		if (index !== -1) {
-			word.yomigana = word.word.substr (0, index).trim ();
-			word.word = word.word.substr (index + 1).replace (']', '').trim ();
+		if (sqIndex !== -1) {
+			word.yomigana = word.word.substr (0, sqIndex).trim ();
+			word.word = word.word.substr (sqIndex + 1).replace (']', '').trim ();
+		}
+
+		var mdIndex = word.word.lastIndexOf('·');
+
+		if (mdIndex !== -1) {
+			word.word = word.word.substr (mdIndex + 1).trim ();
 		}
 	};
 
