@@ -8,7 +8,7 @@
 		router.put ('/sync', function (req, res) {
 			var input = req.body;
 			
-			db.words.find ().sort ({ Level: 1, index: 1 }, function (err, data) {
+			db.words.find ({ streak: { $lt: 11 } }).sort ({ Level: 1, index: 1 }, function (err, data) {
 				var i, j;
 				var word;
 

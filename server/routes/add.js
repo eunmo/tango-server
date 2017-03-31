@@ -23,7 +23,8 @@
 						word: word.word,
 						yomigana: word.yomigana,
 						meaning: word.meaning,
-						learned: false
+						learned: false,
+						streak: 0
 					};
 
 					db.words.insert (newWord);
