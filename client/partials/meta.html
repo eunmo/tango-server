@@ -4,7 +4,7 @@
 	</h1>
 	<div class="col-md-8 col-md-offset-2">
 		<table class="table table-bordered table-condensed" ng-show="meta.length">
-			<tr ng-repeat="level in levels | orderBy: '-name'" class="text-right">
+			<tr ng-repeat="level in levels | orderBy: '-name'" class="text-right" ng-show="level.total - level.learned">
 				<td class="hidden-xs">
 					{{level.name}}
 				</td>
