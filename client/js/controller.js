@@ -252,6 +252,12 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location, 
 		}
 	};
 
+	$scope.newWordAdded = function (index) {
+		if ($scope.words.length === index + 1 && $scope.words.length > 1) {
+			$scope.newLine ();
+		}
+	};
+
 	$scope.submit = function () {
 		var words = [];
 
