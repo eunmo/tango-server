@@ -5,10 +5,11 @@
 
 	module.exports = function (router, db) {
 
-		router.put ('/add', function (req, res) {
+		router.put ('/add/:_Level', function (req, res) {
 			var words = req.body;
+			var Level = req.params._Level;
 
-			db.words.find ({ Level: 'N0' }).sort ({ index: -1 }).limit(1, function (err, data) {
+			db.words.find ({ Level: Level }).sort ({ index: -1 }).limit(1, function (err, data) {
 				var baseIndex = 1;
 
 				if (data.length > 0) {
@@ -18,7 +19,7 @@
 				for (var i in words) {
 					var word = words[i];
 					var newWord = {
-						Level: 'N0',
+						Level: Level,
 						index: baseIndex + Number(i),
 						word: word.word,
 						yomigana: word.yomigana,

@@ -179,7 +179,7 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routePara
 	};
 });
 
-tangoApp.controller ('CleanupCtrl', function ($rootScope, $scope, $http, $routeParams) {
+tangoApp.controller ('CleanupCtrl', function ($rootScope, $scope, $http) {
 
 	$scope.words = [];
 	$scope.orderBy = '';
@@ -217,10 +217,20 @@ tangoApp.controller ('CleanupCtrl', function ($rootScope, $scope, $http, $routeP
 	};
 });
 
-tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) {
+tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location, $routeParams) {
 
 	$scope.words = [];
 
+	function getLevelName() {
+		var lang = $routeParams.lang;
+		var today = new Date();
+		var yymm = today.toISOString().substring(2, 7).replace(/-/g,'');
+
+		return lang + yymm;
+	}
+
+	$scope.levelName = getLevelName();
+	
 	$scope.newLine = function () {
 		$scope.words.push ({ word: '', yomigana: '', meaning: '' });
 	};
@@ -254,7 +264,7 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location) 
 		}
 
 		if (words.length > 0) {
-			$http.put('add', words)
+			$http.put('add/' + $scope.levelName, words)
 				.then (function (res) {
 					$location.url ('/');
 				});

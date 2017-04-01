@@ -5,7 +5,7 @@ tangoApp = angular.module ('tangoApp', ['ngRoute'])
 		templateUrl: '/partials/meta.html',
 		controller: 'MetaCtrl'
 	})
-	.when ('/add', {
+	.when ('/add/:lang', {
 		templateUrl: '/partials/add.html',
 		controller: 'AddCtrl'
 	})
