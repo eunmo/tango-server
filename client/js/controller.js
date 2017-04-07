@@ -76,30 +76,21 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 	$http.get ('level_summary').success (function (data) {
 		var i, j;
 		var row;
-		var level_index;
-
-		var max_level = 0;
-		for (i in data) {
-			row = data[i];
-			level_index = parseInt (row.Level[1]);
-			if (max_level < level_index) {
-				max_level = level_index;
-			}
-		}
-
+		var levels = {};
 		var level;
-		for (i = 0; i <= max_level; i++) {
-			level = { name: 'N' + i, streaks: [], learned: 0, total: 0 };
-			for (j = 0; j < 10; j++) {
-				level.streaks[j] = 0;
-			}
-			$scope.levels[i] = level;
-		}
-
 		for (i in data) {
 			row = data[i];
-			level_index = parseInt (row.Level[1]);
-			level = $scope.levels[level_index];
+			if (levels[row.Level] === undefined) {
+				level = { name: row.Level, streaks: [], learned: 0, total: 0 };
+
+				for (j = 0; j < 10; j++) {
+					level.streaks[j] = 0;
+				}
+
+				levels[row.Level] = level;
+			}
+
+			level = levels[row.Level];
 
 			if (row.learned) {
 				if (row.streak === 11) {
@@ -115,6 +106,11 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 
 			level.total += row.count;
 		}
+
+		for (i in levels) {
+			$scope.levels.push(levels[i]);
+		}
+		$scope.levels.sort(function(a, b) { return (a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0); });
 	});
 
 	$scope.selectLevel = function (level) {
