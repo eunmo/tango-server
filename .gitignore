@@ -1,0 +1,5 @@
+data/
+node_modules/
+client/lib/
+*.DS_Store
+server/test.js
