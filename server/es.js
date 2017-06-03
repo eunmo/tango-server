@@ -8,8 +8,8 @@
 	var bodyParser = require ('body-parser');
 	
 	var mongojs = require ('mongojs');
-	var db = mongojs ('tango', ['words']);
-	var routes = require ('./routes/index') (db, 'index');
+	var db = mongojs ('tango-es', ['words']);
+	var routes = require ('./routes/index') (db, 'index-es');
 
 	var app = express ();
 
@@ -24,7 +24,7 @@
 
 	app.use ('/', routes);
 		
-	var server = app.listen (3010, function () {
+	var server = app.listen (3011, function () {
 		console.log ('Express server listening on port ' + server.address ().port);
 	});
 

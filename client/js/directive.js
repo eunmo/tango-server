@@ -5,6 +5,13 @@ tangoApp.directive('navi', function () {
 	};
 });
 
+tangoApp.directive('naviEs', function () {
+	return {
+		restrict: 'E',
+		templateUrl: 'partials/navi-es.html'
+	};
+});
+
 tangoApp.directive('search', function () {
 	return {
 		restrict: 'E',

@@ -212,9 +212,11 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 				break;
 
 			case 'E':
-			default:
 				r -= streak;
 				b -= streak;
+				break;
+			
+			default:
 				break;
 		}
 
