@@ -13,17 +13,17 @@
 		<th>
 			Level
 		</th>
-		<th>
+		<th class="hidden-xs">
 			Index
 		</th>
 		<th>
-			Streak
+			<span class="hidden-xs">Streak</span>
 		</th>
 		<th>
 			Word
 		</th>
 		<th>
-			Yomigana
+			<span class="hidden-xs">Yomigana</span>
 		</th>
 		<th>
 			Meaning
@@ -31,11 +31,11 @@
 		<th>
 		</th>
 	</tr>
-	<tr ng-repeat="word in words">
+	<tr ng-repeat-start="word in words" ng-hide="word.inEdit">
 		<td>
 			{{word.Level}}
 		</td>
-		<td>
+		<td class="hidden-xs">
 			{{word.index}}
 		</td>
 		<td>
@@ -43,21 +43,37 @@
 		</td>
 		<td>
 			<span ng-hide="word.inEdit">{{word.word}}</span>
-			<input class="form-control" ng-model="word.word" ng-show="word.inEdit" />
 		</td>
 		<td>
 			<span ng-hide="word.inEdit">{{word.yomigana}}</span>
-			<input class="form-control" ng-model="word.yomigana" ng-show="word.inEdit" />
 		</td>
 		<td>
 			<span ng-hide="word.inEdit">{{word.meaning}}</span>
-			<input class="form-control" ng-model="word.meaning" ng-show="word.inEdit" />
 		</td>
 		<td>
-			<span class="label label-success" ng-click="beginEdit(word)" ng-hide="word.inEdit">edit</span>
-			<span class="label label-default" ng-click="cancel(word)" ng-show="word.inEdit">cancel</span>
-			<br ng-show="word.inEdit"/>
-			<span class="label label-danger" ng-click="commit(word)" ng-show="word.inEdit">commit</span>
+			<span class="label label-success" ng-click="beginEdit(word)">edit</span>
+		</td>
+	</tr>
+	<tr ng-repeat-end ng-show="word.inEdit">
+		<td colspan="7">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="col-sm-1 control-label">{{word.Level}}</label>
+					<label class="col-sm-1 control-label">{{word.index}}</label>
+					<div class="col-sm-3">
+						<input type="text" class="form-control" ng-model="word.word" placeholder="word">
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="form-control" ng-model="word.yomigana" placeholder="yomigana">
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="form-control" ng-model="word.meaning" placeholder="meaning">
+					</div>
+					<div class="col-sm-1">
+						<button class="btn btn-default" ng-click="commit(word)">Commit</button>
+					</div>
+				</div>
+			</form>
 		</td>
 	</tr>
 </table>
