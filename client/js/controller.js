@@ -391,9 +391,10 @@ tangoApp.controller('WordCtrl', function ($rootScope, $scope, $http, $routeParam
 tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $routeParams) {
 
 	$scope.words = [];
+	$scope.lang = $routeParams.lang;
 
 	function getLevelName() {
-		var lang = $routeParams.lang;
+		var lang = $scope.lang;
 		var today = new Date();
 		var yymm = today.toISOString().substring(2, 7).replace(/-/g,'');
 
@@ -401,8 +402,12 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 	}
 
 	$scope.levelName = getLevelName();
+
+	$scope.change = function () {
+		$scope.levelName = getLevelName();
+	};
 	
-	$scope.newLine = function() {
+	$scope.newLine = function () {
 		$scope.words.push({ word: '', yomigana: '', meaning: '' });
 	};
 
@@ -440,7 +445,9 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 			}
 		}
 
-		if (words.length > 0) {
+		var r = confirm('Add words for ' + $scope.levelName + '?');
+
+		if (words.length > 0 && r) {
 			$http.put('add/' + $scope.levelName, words)
 				.then(function (res) {
 					$location.url('/');
