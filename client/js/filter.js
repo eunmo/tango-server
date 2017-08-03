@@ -10,10 +10,10 @@ tangoApp.filter('fullLanguage', function () {
 	return function (lang) {
 		switch (lang) {
 			case 'J':
-				return 'Japanese';
+				return '日本語';
 
 			case 'F':
-				return 'French';
+				return 'Français';
 
 			case 'E':
 				return 'English';

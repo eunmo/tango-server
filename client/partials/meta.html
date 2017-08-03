@@ -1,4 +1,13 @@
 <div class="row">
+	<div class="col-md-12">
+		<table class="table table-condensed" ng-show="langMetas.length">
+			<tr>
+				<td ng-repeat="lang in langMetas" ng-click="selectLang(lang.lang)">
+					<h3><small>{{lang.lang | fullLanguage}}</small> {{lang.total - lang.learned}}<small>/{{lang.total}}</small></h3>
+				</td>
+			</tr>
+		</table>
+	</div>
 	<h1 class="col-md-8 col-md-offset-2" ng-show="newWordCount">
 		{{newWordCount}} <small>new word<span ng-show="newWordCount > 1">s</span></small>
 	</h1>
@@ -13,30 +22,32 @@
 					{{level.name}}
 				</td>
 				<td class="inverted" ng-click="selectLevel(level.name)">
-					{{level.total - level.learned}}
+					{{getSelectedSumUH(level)}}
 				</td>
 				<td ng-repeat="streak in level.streaks track by $index"
-						style="{{getUpperColor(level, streak)}}">
-					{{streak | hideZero}}
+						style="{{getUpperColor(level, getFilteredStreak(level, $index))}}">
+					{{getFilteredStreak(level, $index) | hideZero}}
 				</td>
 			</tr>
 			<tr class="inverted text-right">
 				<td class="hidden-xs">
-					Test day
+					<span ng-hide="selectedDay">Test day</span>
+					<span ng-show="selectedDay">{{selectedDay.date | date : 'EEE, MMM dd'}}</span>
 				</td>
-				<td>
-					Sum
+				<td ng-click="clearSelected()">
+					<span ng-hide="selectedDay">Sum</span>
+					<span ng-show="selectedDay">{{getSelectedSumLH(selectedDay)}}</span>
 				</td>
 				<td ng-repeat="streak in streaks track by $index">
-					{{streak}}
+					{{getSelectedSumV($index)}}
 				</td>
 			</tr>
-			<tr ng-repeat="day in meta" ng-show="day.sum" class="text-right">
+			<tr ng-repeat="day in meta" ng-show="day.sum && (selectedDay === null)" class="text-right">
 				<td class="hidden-xs">
 					{{day.date | date : 'EEE, MMM dd'}}
 				</td>
-				<td class="inverted">
-					{{day.sum}}
+				<td class="inverted" ng-click="selectDay(day)">
+					{{getSelectedSumLH(day)}}
 				</td>
 				<td ng-repeat="streak in day.streaks track by $index">
 					<span ng-show="selectedLevel">{{streak.levels[selectedLevel] | hideZero}}</span>
