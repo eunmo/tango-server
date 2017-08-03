@@ -282,44 +282,6 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routePara
 	};
 });
 
-tangoApp.controller ('CleanupCtrl', function ($rootScope, $scope, $http) {
-
-	$scope.words = [];
-	$scope.orderBy = '';
-	$scope.order = 0;
-	$scope.selectedLevel = 'all';
-
-	$http.get ('select/cleanup').success (function (data) {
-		$scope.words = data;
-
-		for (var i in $scope.words) {
-			var word = $scope.words[i];
-
-			if (word.streak <= 0) {
-				word.minus = true;
-			} else if (word.streak > 10) {
-				word.done = true;
-			}
-		}
-	});
-
-	$scope.changeOrderBy = function () {
-		$scope.order = ($scope.order + 1) % 3;
-		if ($scope.order === 0) {
-
-			if ($scope.Selectedlevel === 'all') {
-				$scope.orderBy = 'Level, index';
-			} else {
-				$scope.orderBy = 'index';
-			}
-		} else if ($scope.order === 1) {
-			$scope.orderBy = ['-learned', 'streak'];
-		} else {
-			$scope.orderBy = ['-learned', '-streak'];
-		}
-	};
-});
-
 tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location, $routeParams) {
 
 	$scope.words = [];
