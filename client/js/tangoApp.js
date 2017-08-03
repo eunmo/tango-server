@@ -1,22 +1,22 @@
-tangoApp = angular.module ('tangoApp', ['ngRoute'])
-.config (function ($routeProvider) {
+tangoApp = angular.module('tangoApp', ['ngRoute'])
+.config(function ($routeProvider) {
 	$routeProvider
-	.when ('/', {
+	.when('/', {
 		templateUrl: '/partials/meta.html',
 		controller: 'MetaCtrl'
 	})
-	.when ('/add/:lang', {
+	.when('/add/:lang', {
 		templateUrl: '/partials/add.html',
 		controller: 'AddCtrl'
 	})
-	.when ('/search', {
+	.when('/search', {
 		template: '<search></search>'
 	})
-	.when ('/level/:level', {
+	.when('/level/:level', {
 		templateUrl: '/partials/words.html',
 		controller: 'WordCtrl'
 	})
-	.otherwise ({
+	.otherwise({
 		redirectTo: '/'
   });
 });

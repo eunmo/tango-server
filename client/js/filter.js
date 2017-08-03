@@ -1,4 +1,4 @@
-tangoApp.filter ('hideZero', function () {
+tangoApp.filter('hideZero', function () {
 	return function (num) {
 		if (num === 0)
 			return '';
@@ -6,7 +6,7 @@ tangoApp.filter ('hideZero', function () {
 	};
 });
 
-tangoApp.filter ('fullLanguage', function () {
+tangoApp.filter('fullLanguage', function () {
 	return function (lang) {
 		switch (lang) {
 			case 'J':

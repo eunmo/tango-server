@@ -1,14 +1,14 @@
-tangoApp.controller ('NavCtrl', function ($rootScope, $scope, $http) {
+tangoApp.controller('NavCtrl', function ($rootScope, $scope, $http) {
 	
 	$scope.levels = [];	
 
-	$http.get ('select/levels').success (function (data) {
+	$http.get('select/levels').success(function (data) {
 		$scope.levels = data;
-		$scope.levels.push ('all');
+		$scope.levels.push('all');
 	});
 });
 
-tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
+tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 
 	$scope.meta = [];
 	$scope.streaks = [];
@@ -19,8 +19,8 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 	$scope.selectedLang = '';
 
 	function fixDate (date, streak) {
-		var baseDate = new Date (date);
-		var dateOffset = baseDate.getDate () + streak;
+		var baseDate = new Date(date);
+		var dateOffset = baseDate.getDate() + streak;
 
 		if (baseDate.getHours() < 5) {
 			dateOffset -= 1;
@@ -47,18 +47,18 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 		return lang;
 	}
 
-	$http.get ('meta').success (function (data) {
+	$http.get('meta').success(function (data) {
 		var i, j;
 		var now = new Date();
 		var newDate, streaks;
 
 		for (i = 0; i <= 10; i++) {
-			newDate = fixDate (new Date (now), 0);
-			newDate.setDate (newDate.getDate() + i);
+			newDate = fixDate(new Date(now), 0);
+			newDate.setDate(newDate.getDate() + i);
 			streaks = [];
 
 			for (j = 0; j < Math.min(10, 11 - i); j++) {
-				streaks.push ({ sum: 0, levels: {}, langs: { E: 0, F: 0, J: 0 }});
+				streaks.push({ sum: 0, levels: {}, langs: { E: 0, F: 0, J: 0 }});
 			}
 
 			$scope.meta[i] = {
@@ -76,8 +76,8 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 		for (i in data) {
 			row = data[i];
 			streak = Math.max(row.streak, 1);
-			testDay = fixDate (row.lastCorrect, streak);
-			now = fixDate (new Date (), 0);
+			testDay = fixDate(row.lastCorrect, streak);
+			now = fixDate(new Date(), 0);
 			index = (testDay - now) / 86400000;
 
 			if (index >= 0) {
@@ -97,7 +97,7 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 		}
 	});
 
-	$http.get ('level_summary').success (function (data) {
+	$http.get('level_summary').success(function (data) {
 		var i, j;
 		var row;
 		var levels = {};
@@ -230,13 +230,13 @@ tangoApp.controller ('MetaCtrl', function ($rootScope, $scope, $http) {
 	};
 });
 
-tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
+tangoApp.controller('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
 
 	$scope.words = [];
 	$scope.orderBy = '';
 	$scope.order = 0;
 
-	$http.get ('select/' + $routeParams.level).success (function (data) {
+	$http.get('select/' + $routeParams.level).success(function (data) {
 		$scope.words = data;
 
 		for (var i in $scope.words) {
@@ -259,8 +259,8 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routePara
 	};
 
 	$scope.commit = function (word) {
-		$http.put ('update/word', word)
-		.then (function (res) {
+		$http.put('update/word', word)
+		.then(function (res) {
 			word.inEdit = false;
 		});
 	};
@@ -282,7 +282,7 @@ tangoApp.controller ('WordCtrl', function ($rootScope, $scope, $http, $routePara
 	};
 });
 
-tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location, $routeParams) {
+tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $routeParams) {
 
 	$scope.words = [];
 
@@ -296,30 +296,30 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location, 
 
 	$scope.levelName = getLevelName();
 	
-	$scope.newLine = function () {
-		$scope.words.push ({ word: '', yomigana: '', meaning: '' });
+	$scope.newLine = function() {
+		$scope.words.push({ word: '', yomigana: '', meaning: '' });
 	};
 
-	$scope.newLine ();
+	$scope.newLine();
 
 	$scope.newWordInput = function (word) {
 		var sqIndex = word.word.indexOf('[');
 
 		if (sqIndex !== -1) {
-			word.yomigana = word.word.substr (0, sqIndex).trim ();
-			word.word = word.word.substr (sqIndex + 1).replace (']', '').trim ();
+			word.yomigana = word.word.substr(0, sqIndex).trim();
+			word.word = word.word.substr(sqIndex + 1).replace(']', '').trim();
 		}
 
 		var mdIndex = word.word.lastIndexOf('·');
 
 		if (mdIndex !== -1) {
-			word.word = word.word.substr (mdIndex + 1).trim ();
+			word.word = word.word.substr(mdIndex + 1).trim();
 		}
 	};
 
 	$scope.newWordAdded = function (index) {
 		if ($scope.words.length === index + 1 && $scope.words.length > 1) {
-			$scope.newLine ();
+			$scope.newLine();
 		}
 	};
 
@@ -330,14 +330,14 @@ tangoApp.controller ('AddCtrl', function ($rootScope, $scope, $http, $location, 
 			var word = $scope.words[i];
 
 			if (word.word !== '') {
-				words.push (word);
+				words.push(word);
 			}
 		}
 
 		if (words.length > 0) {
 			$http.put('add/' + $scope.levelName, words)
-				.then (function (res) {
-					$location.url ('/');
+				.then(function (res) {
+					$location.url('/');
 				});
 		}
 	};

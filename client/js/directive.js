@@ -21,7 +21,7 @@ tangoApp.directive('search', function () {
 			$scope.timeout = null;
 
 			$scope.search = function () {
-				$http.get ('search/' + $scope.query).success (function (data) {
+				$http.get('search/' + $scope.query).success(function (data) {
 					$scope.words = data;
 
 					for (var i in $scope.words) {
@@ -35,15 +35,15 @@ tangoApp.directive('search', function () {
 					}
 					
 					if ($scope.expire) {
-						$scope.cancelTimeout ();	
-						$scope.timeout = $timeout (function () { $scope.clear (true); }, 10000);
+						$scope.cancelTimeout();	
+						$scope.timeout = $timeout(function () { $scope.clear(true); }, 10000);
 					}
 				});
 			};
 
 			$scope.cancelTimeout = function () {
 				if ($scope.timeout !== null) {
-					$timeout.cancel ($scope.timeout);
+					$timeout.cancel($scope.timeout);
 					$scope.timeout = null;
 				}
 			};
@@ -56,7 +56,7 @@ tangoApp.directive('search', function () {
 					$scope.timeout = null;
 				}
 				else {
-					$scope.cancelTimeout ();
+					$scope.cancelTimeout();
 				}
 			};
 
@@ -69,11 +69,11 @@ tangoApp.directive('search', function () {
 			};
 
 			$scope.commit = function (word) {
-				$http.put ('update/word', word)
-					.then ($scope.cancel);
+				$http.put('update/word', word)
+					.then($scope.cancel);
 			};
 
-			$scope.clear ();
+			$scope.clear();
 		}],
 		templateUrl: 'partials/directive-search.html'
 	};
