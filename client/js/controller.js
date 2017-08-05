@@ -445,9 +445,7 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 			}
 		}
 
-		var r = confirm('Add words for ' + $scope.levelName + '?');
-
-		if (words.length > 0 && r) {
+		if (words.length > 0) {
 			$http.put('add/' + $scope.levelName, words)
 				.then(function (res) {
 					$location.url('/');
