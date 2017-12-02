@@ -72,6 +72,11 @@ tangoApp.directive('search', function () {
 				$http.put('update/word', word)
 					.then($scope.cancel);
 			};
+			
+			$scope.remove = function (word) {
+				$http.put('remove/word', word)
+					.then($scope.search);
+			};
 
 			$scope.clear();
 		}],

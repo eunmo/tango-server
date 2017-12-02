@@ -60,17 +60,20 @@
 				<div class="form-group">
 					<label class="col-sm-1 control-label">{{word.Level}}</label>
 					<label class="col-sm-1 control-label">{{word.index}}</label>
-					<div class="col-sm-3">
+					<div class="col-sm-2">
 						<input type="text" class="form-control" ng-model="word.word" placeholder="word">
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-2">
 						<input type="text" class="form-control" ng-model="word.yomigana" placeholder="yomigana">
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-4">
 						<input type="text" class="form-control" ng-model="word.meaning" placeholder="meaning">
 					</div>
 					<div class="col-sm-1">
 						<button class="btn btn-default" ng-click="commit(word)">Commit</button>
+					</div>
+					<div class="col-sm-1">
+						<button class="btn btn-danger" ng-click="remove(word)">Remove</button>
 					</div>
 				</div>
 			</form>
