@@ -70,7 +70,7 @@ tangoApp.directive('search', function () {
 
 			$scope.commit = function (word) {
 				$http.put('update/word', word)
-					.then($scope.cancel);
+					.then($scope.search);
 			};
 			
 			$scope.remove = function (word) {
