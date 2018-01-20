@@ -426,6 +426,8 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 		if (mdIndex !== -1) {
 			word.word = word.word.substr(mdIndex + 1).trim();
 		}
+
+		word.word = word.word.replace('’', '\'');
 	};
 
 	$scope.newWordAdded = function (index) {
