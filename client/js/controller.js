@@ -438,6 +438,9 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 		if ($scope.words.length === index + 1 && $scope.words.length > 1) {
 			$scope.newLine();
 		}
+		
+		var word = $scope.words[index];
+		word.meaning = word.meaning.replace(' ⧫ ', ', ');
 	};
 
 	$scope.submit = function () {
