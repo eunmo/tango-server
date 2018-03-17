@@ -61,7 +61,11 @@
 		<table class="table table-condensed" ng-show="levels.length">
 			<tr ng-repeat="lang in langs">
 				<td ng-repeat="level in lang.levels" ng-click="selectLevel(level.name)">
-					<h3><small>{{level.name}}</small> {{level.total - level.learned}}<small>/{{level.total}}</small></h3>
+					<h3>
+						<small>{{level.name}}</small>
+						<span ng-show="level.total != level.learned">{{level.total - level.learned}}<small>/{{level.total}}</small></span>
+						<span ng-hide="level.total != level.learned"><small>{{level.total}}</small></span>
+					</h3>
 				</td>
 			</tr>
 		</table>
