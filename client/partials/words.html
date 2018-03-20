@@ -1,12 +1,12 @@
 <table class="table" ng-show="words.length">
 	<tr>
-		<th ng-show="selectedLevel === 'all'">
+		<th ng-show="selectedLevel === 'all' || selectedLevel === 'new'">
 			Level
 		</th>
-		<th>
+		<th ng-hide="selectedLevel === 'new'">
 			Index
 		</th>
-		<th>
+		<th ng-hide="selectedLevel === 'new'">
 			<span ng-click="changeOrderBy()">Streak</span>
 		</th>
 		<th>
@@ -22,13 +22,13 @@
 		</th>
 	</tr>
 	<tr ng-repeat="word in words | orderBy: orderBy">
-		<td ng-show="selectedLevel === 'all'">
-			{{word.Level}}
+		<td ng-show="selectedLevel === 'all' || selectedLevel === 'new'">
+			<b>{{word.Level.charAt(0)}}</b>{{word.Level.slice(1)}}
 		</td>
-		<td>
+		<td ng-hide="selectedLevel === 'new'">
 			{{word.index}}
 		</td>
-		<td>
+		<td ng-hide="selectedLevel === 'new'">
 			<span class="label label-default" ng-show="word.learned" ng-class="{'label-danger': word.minus, 'label-success': word.done}">{{word.streak}}</span>
 		</td>
 		<td>

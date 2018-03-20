@@ -338,6 +338,7 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 
 tangoApp.controller('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
 
+	$scope.selectedLevel = $routeParams.level;
 	$scope.words = [];
 	$scope.orderBy = '';
 	$scope.order = 0;
@@ -375,7 +376,7 @@ tangoApp.controller('WordCtrl', function ($rootScope, $scope, $http, $routeParam
 		$scope.order = ($scope.order + 1) % 3;
 		if ($scope.order === 0) {
 
-			if ($scope.Selectedlevel === 'all') {
+			if ($scope.selectedlevel === 'all') {
 				$scope.orderBy = 'Level, index';
 			} else {
 				$scope.orderBy = 'index';

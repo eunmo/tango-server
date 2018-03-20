@@ -14,6 +14,12 @@
 				res.json (data);
 			});
 		});
+
+		router.get ('/select/new', function (req, res) {
+			db.words.find ({ learned: false }).sort ({ Level: 1, index: 1 }, function (err, data) {
+				res.json (data);
+			});
+		});
 		
 		router.get ('/select/cleanup', function (req, res) {
 			db.words
