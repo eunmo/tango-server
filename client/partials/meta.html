@@ -3,7 +3,6 @@
 		<table class="table table-condensed" ng-show="langMetas.length">
 			<tr>
 				<td ng-repeat="lang in langMetas">
-					<h1 class="text-center"><a href="#/add/{{lang.lang}}">+{{lang.lang}}</a></h1>
 					<h3 ng-click="selectLang(lang.lang)">
 						<small>{{lang.lang | fullLanguage}}</small> {{lang.total - lang.learned}}<small>/{{lang.total}}</small>
 					</h3>

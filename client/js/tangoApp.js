@@ -2,8 +2,8 @@ tangoApp = angular.module('tangoApp', ['ngRoute'])
 .config(function ($routeProvider) {
 	$routeProvider
 	.when('/', {
-		templateUrl: '/partials/meta.html',
-		controller: 'MetaCtrl'
+		templateUrl: '/partials/main.html',
+		controller: 'MainCtrl'
 	})
 	.when('/add/:lang', {
 		templateUrl: '/partials/add.html',
@@ -15,6 +15,10 @@ tangoApp = angular.module('tangoApp', ['ngRoute'])
 	.when('/level/:level', {
 		templateUrl: '/partials/words.html',
 		controller: 'WordCtrl'
+	})
+	.when('/meta', {
+		templateUrl: '/partials/meta.html',
+		controller: 'MetaCtrl'
 	})
 	.otherwise({
 		redirectTo: '/'
