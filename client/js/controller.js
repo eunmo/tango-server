@@ -105,7 +105,7 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 		for (i in data) {
 			row = data[i];
 			if (levels[row.Level] === undefined) {
-				level = { name: row.Level, streaks: [], learned: 0, total: 0 };
+				level = { name: row.Level, streaks: [], learned: 0, total: 0, newWordCount: 0 };
 
 				for (j = 0; j < 10; j++) {
 					level.streaks[j] = 0;
@@ -125,6 +125,7 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 				}
 			}
 			else {
+				level.newWordCount += row.count;
 				$scope.newWordCount += row.count;
 			}
 
@@ -160,11 +161,12 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 			lang = getLang(level.name);
 
 			if (langMap[lang] === undefined) {
-				langMap[lang] = { lang: lang, total: 0, learned : 0 };
+				langMap[lang] = { lang: lang, total: 0, learned : 0, newWordCount: 0  };
 			}
 
 			langMap[lang].total += level.total;
 			langMap[lang].learned += level.learned;
+			langMap[lang].newWordCount += level.newWordCount;
 		}
 
 		for (i in langMap) {
@@ -210,6 +212,8 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 		} else if ($scope.selectedLang !== '') {
 			if ($scope.selectedLang !== getLang(level.name))
 				return false;
+		} else {
+			return false;
 		}
 
 		return true;
