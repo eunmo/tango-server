@@ -5,8 +5,8 @@
 	<button class="btn btn-primary" ng-click="search()">Search</button>
 	<button class="btn btn-default" ng-click="clear(false)">Clear</button>
 </form>
-<h1 ng-show="words.length">
-	Searched Words
+<h1 ng-show="queryAnswered">
+	Searched Words for <b>{{oldQuery}}</b>:
 </h1>
 <table class="table" ng-show="words.length">
 	<tr>

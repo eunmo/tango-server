@@ -19,10 +19,15 @@ tangoApp.directive('search', function () {
 		scope: { expire: '=' },
 		controller: ['$scope', '$http', '$timeout', function SearchCtrl ($scope, $http, $timeout) {
 			$scope.timeout = null;
+			$scope.queryAnswered = false;
 
 			$scope.search = function () {
+				$scope.query = $scope.query.replace('’', '\'');
+				$scope.oldQuery = $scope.query;
+
 				$http.get('search/' + $scope.query).success(function (data) {
 					$scope.words = data;
+					$scope.queryAnswered = true;
 
 					for (var i in $scope.words) {
 						var word = $scope.words[i];
@@ -51,6 +56,8 @@ tangoApp.directive('search', function () {
 			$scope.clear = function (byTimeout) {
 				$scope.query = "";
 				$scope.words = [];
+				$scope.queryAnswered = false;
+				$scope.oldQuery = "";
 				
 				if (byTimeout) {
 					$scope.timeout = null;
