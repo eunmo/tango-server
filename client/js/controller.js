@@ -306,11 +306,10 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 	};
 	
 	$scope.selectDay = function (day) {
-		var selectedDay = $scope.selectedDay;
-		$scope.clearSelected();
-		if (selectedDay !== day) {
-			$scope.selectedDay = day;
-		}
+		if ($scope.selectedLang === '')
+			return;
+
+		$scope.selectedDay = day;
 	};
 
 	$scope.filter = function (level) {
