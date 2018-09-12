@@ -7,8 +7,22 @@ body {
 	background-color: #333;
 }
 
+
+.show-mobile {
+	display: none;
+}
+
 @media screen and (max-width: 543px) {
 	.Meta-table {
 		font-size: smaller;
 	}
+	
+	.hide-mobile {
+		display: none;
+	}
+
+	.show-mobile {
+		display: inline;
+	}
+
 }

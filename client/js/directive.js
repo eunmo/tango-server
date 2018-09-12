@@ -16,7 +16,7 @@ tangoApp.directive('search', function () {
 	return {
 		restrict: 'E',
 		transclude: true,
-		scope: { expire: '=' },
+		scope: { expire: '=', word: '=' },
 		controller: ['$scope', '$http', '$timeout', function SearchCtrl ($scope, $http, $timeout) {
 			$scope.timeout = null;
 			$scope.queryAnswered = false;
@@ -87,6 +87,11 @@ tangoApp.directive('search', function () {
 
 			$scope.clear();
 		}],
+		link: function (scope, elem, attr) {
+			scope.$watch('word', function (newValue, oldValue) {
+				scope.query = newValue;
+			});
+		},
 		templateUrl: 'partials/directive-search.html'
 	};
 });

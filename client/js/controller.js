@@ -547,13 +547,20 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 	};
 
 	$scope.newWordAdded = function (index) {
-		if ($scope.words.length === index + 1 && $scope.words.length > 1) {
+		if ($scope.words.length === index + 1) {
 			$scope.newLine();
 		}
 		
 		var word = $scope.words[index];
 		word.meaning = word.meaning.replace(' ⧫ ', ', ');
 	};
+
+	$scope.search = function (word) {
+		if ($scope.lang === 'J')
+			$scope.word = word.word + ']' + word.yomigana;
+		else
+			$scope.word = word.word;
+	}
 
 	$scope.submit = function () {
 		var words = [];

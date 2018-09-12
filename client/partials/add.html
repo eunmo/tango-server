@@ -1,18 +1,23 @@
-<search expire="true"></search>
+<search expire="true" word="word"></search>
 <h1>
 	New words for {{levelName}}
 </h1>
 <form class="form-horizontal">
 	<div class="form-group" ng-repeat="word in words">
-		<label class="col-sm-1 control-label">{{$index + 1}}</label>
+		<label class="col-sm-1 control-label hide-mobile">{{$index + 1}}</label>
 		<div class="col-sm-2">
 			<input type="text" class="form-control" ng-model="word.word" placeholder="word" ng-change="newWordInput(word)">
 		</div>
 		<div class="col-sm-2">
-			<input type="text" class="form-control" ng-model="word.yomigana" placeholder="yomigana">
+			<input type="text" class="form-control show-mobile" ng-model="word.yomigana" placeholder="yomigana">
+			<input type="text" class="form-control hide-mobile" ng-model="word.yomigana" placeholder="yomigana" ng-change="newWordAdded($index)">
 		</div>
-		<div class="col-sm-6">
-			<input type="text" class="form-control" ng-model="word.meaning" placeholder="meaning" ng-change="newWordAdded($index)">
+		<div class="col-sm-5">
+			<input type="text" class="form-control show-mobile" ng-model="word.meaning" placeholder="meaning">
+			<input type="text" class="form-control hide-mobile" ng-model="word.meaning" placeholder="meaning" ng-change="newWordAdded($index)">
+		</div>
+		<div class="col-sm-1">
+			<button class="btn btn-default" ng-click="search(word)">Search</button>
 		</div>
 	</div>
 	<div class="form-group">
