@@ -90,6 +90,7 @@ tangoApp.directive('search', function () {
 		link: function (scope, elem, attr) {
 			scope.$watch('word', function (newValue, oldValue) {
 				scope.query = newValue;
+				scope.search();
 			});
 		},
 		templateUrl: 'partials/directive-search.html'
