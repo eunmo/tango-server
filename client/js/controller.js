@@ -530,12 +530,18 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 		if (sqIndex !== -1) {
 			word.yomigana = word.word.substr(0, sqIndex).trim();
 			word.word = word.word.substr(sqIndex + 1).replace(']', '').trim();
+
+			if (window.innerWidth > 543)
+				$scope.newWordAdded($scope.words.indexOf(word));
 		}
 
 		var tbIndex = word.word.indexOf('（');
 		if (tbIndex !== -1) {
 			word.yomigana = word.word.substr(tbIndex + 1).replace('）', '').trim();
 			word.word = word.word.substr(0, tbIndex).replace(' ', '').trim();
+
+			if (window.innerWidth > 543)
+				$scope.newWordAdded($scope.words.indexOf(word));
 		}
 
 		var mdIndex = word.word.lastIndexOf('·');
