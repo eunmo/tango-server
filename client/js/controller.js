@@ -563,7 +563,7 @@ tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $
 
 	$scope.search = function (word) {
 		if ($scope.lang === 'J')
-			$scope.word = word.word + ']' + word.yomigana;
+			$scope.word = word.word + '[' + word.yomigana;
 		else
 			$scope.word = word.word;
 	}
