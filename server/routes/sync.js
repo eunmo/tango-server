@@ -3,33 +3,49 @@
 
 	var mongojs = require('mongojs');
 
-	module.exports = function (router, db) {
+	function formatDate(date) {
+		var time = new Date(date);
+		return time.toISOString().slice(0, 19).replace('T', ' ');
+	}
 
-		router.put ('/sync', function (req, res) {
+	module.exports = function (router, db, mysql) {
+
+		router.put ('/sync', async function (req, res) {
 			var input = req.body;
-			
-			db.words.find ({ streak: { $lt: 11 } }).sort ({ Level: 1, index: 1 }, function (err, data) {
-				var i, j;
-				var word;
 
-				res.json (data);
+			const query = "SELECT * FROM words WHERE `streak` < 11 ORDER BY `level`, `index`";
+			var data = await mysql.promisifyQuery(query);
 
-				for (i in input) {
-					word = input[i];
+			var map = {};
+			data.forEach(word => {map[word.level + word.index] = word});
 
-					if (word.learned && word.streak > 0) {
-						db.words.update (
-							{ Level: word.Level, index: word.index },
-							{ $set: {
-									learned: word.learned,
-									streak: word.streak,
-									lastCorrect: new Date (word.lastCorrect)
-								}
-							}
-						);
-					}
+			var updates = [];
+			input.forEach(word => {
+				if (word.learned === false || word.streak <= 0 || word.level === undefined)
+					return;
+
+				var storedWord = map[word.level + word.index];
+
+				if (storedWord === undefined)
+					return;
+
+				var storedDate = formatDate(storedWord.lastCorrect);
+				var inputDate = formatDate(word.lastCorrect);
+
+				if (storedDate !== inputDate) {
+					updates.push("UPDATE words" +
+						" SET `learned`=" + word.learned +
+						", `streak`=" + word.streak +
+						", `lastCorrect`=\"" + inputDate +
+						"\" WHERE `level`=\"" + word.level +
+						"\" AND `index`=" + word.index);
 				}
 			});
+
+			if (updates.length > 0) {
+				await mysql.promisifyQuery(updates.join(';'));
+			}
+			res.json(data);
 		});
 	};
 }());

@@ -14,7 +14,8 @@ var pool = mysql.createPool({
 	database : dbconfig.database,
 	debug    : false,
 	timezone : 'UTC+0',
-	charset : 'utf8mb4'
+	charset : 'utf8mb4',
+	multipleStatements: true
 });
 
 var db = {pool: pool};

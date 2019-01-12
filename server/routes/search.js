@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	module.exports = function (router, db) {
+	module.exports = function (router, db, mysql) {
 		
 		router.get ('/search/:_word', function (req, res) {
 			var word = req.params._word;
@@ -11,16 +11,15 @@
 
 			for (var i = 0; i < array.length; i++) {
 				word = array[i];
-				filters.push({ word: { $regex: word } });
-				filters.push({ yomigana: { $regex: word } });
-				filters.push({ meaning: { $regex: word } });
+				filters.push("`word` LIKE \"%" + word + "%\"");
+				filters.push("`yomigana` LIKE \"%" + word + "%\"");
+				filters.push("`meaning` LIKE \"%" + word + "%\"");
 			}
 
-			db.words
-			  .find ({ $or: filters })
-			  .sort ({ Level: 1, index: 1 }, function (err, data) {
-				res.json (data);
-			});
+			const query = "SELECT * FROM words WHERE " + filters.join(" OR ") +
+				" ORDER BY `level`, `index`";
+
+			mysql.jsonQuery(query, res);
 		});
 	};
 }());

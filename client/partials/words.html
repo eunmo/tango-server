@@ -23,7 +23,7 @@
 	</tr>
 	<tr ng-repeat="word in words | orderBy: orderBy">
 		<td ng-show="selectedLevel === 'all' || selectedLevel === 'new'">
-			<b>{{word.Level.charAt(0)}}</b>{{word.Level.slice(1)}}
+			<b>{{word.level.charAt(0)}}</b>{{word.level.slice(1)}}
 		</td>
 		<td ng-hide="selectedLevel === 'new'">
 			{{word.index}}

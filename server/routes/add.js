@@ -2,37 +2,34 @@
 	'use strict';
 
 	var mongojs = require('mongojs');
+	
+	function replace(string) {
+		return string.replace(/'/g, "\\\'");
+	}
 
-	module.exports = function (router, db) {
+	module.exports = function (router, db, mysql) {
 
-		router.put ('/add/:_Level', function (req, res) {
+		router.put ('/add/:_level', async function (req, res) {
 			var words = req.body;
-			var Level = req.params._Level;
+			var level = req.params._level;
 
-			db.words.find ({ Level: Level }).sort ({ index: -1 }).limit(1, function (err, data) {
-				var baseIndex = 1;
-
-				if (data.length > 0) {
-					baseIndex = data[0].index + 1;
-				}
-
-				for (var i in words) {
-					var word = words[i];
-					var newWord = {
-						Level: Level,
-						index: baseIndex + Number(i),
-						word: word.word,
-						yomigana: word.yomigana,
-						meaning: word.meaning,
-						learned: false,
-						streak: 0
-					};
-
-					db.words.insert (newWord);
-				}
-
-				res.sendStatus (200);
+			const query1 = "SELECT COALESCE(MAX(`index`),0) + 1 as newid FROM words WHERE `level`=\"" + level + "\"";
+			var result = await mysql.promisifyQuery(query1);
+			const newid = result[0].newid;
+		
+			var values = [];
+			words.forEach((word, index) => {
+				values.push(
+					"(\'" + level.charAt(0) + "\',\'" + level + "\'," + (newid + index) +
+					",\'" + replace(word.word) +
+					"\',\'" + replace(word.yomigana) + "\',\'" + replace(word.meaning) + "\')");
 			});
+
+			const insert = "INSERT INTO words (`lang`, `level`, `index`, `word`, `yomigana`, `meaning`) VALUES " + values.join(',');
+
+			await mysql.promisifyQuery(insert);
+			res.sendStatus (200);
+return;
 		});
 	};
 }());

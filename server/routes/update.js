@@ -3,19 +3,20 @@
 
 	var mongojs = require('mongojs');
 
-	module.exports = function (router, db) {
+	module.exports = function (router, db, mysql) {
 
-		router.put ('/update/word', function (req, res) {
+		router.put('/update/word', async function (req, res) {
 			var input = req.body;
-			
-			db.words.update(
-				{ _id: mongojs.ObjectId (input._id) },
-				{ $set: { word: input.word, yomigana: input.yomigana, meaning: input.meaning } },
-				null,
-				function (err, data) {
-					res.sendStatus (200);
-				}
-			);
+
+			const query = "UPDATE words" +
+				" SET `word`=\"" + input.word +
+				"\", `yomigana`=\"" + input.yomigana +
+				"\", `meaning`=\"" + input.meaning +
+				"\" WHERE `level`=\"" + input.level +
+				"\" AND `index`=" + input.index;
+
+			await mysql.promisifyQuery(query);
+			res.sendStatus(200);
 		});
 	};
 }());

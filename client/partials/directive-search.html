@@ -33,7 +33,7 @@
 	</tr>
 	<tr ng-repeat-start="word in words" ng-hide="word.inEdit">
 		<td>
-			{{word.Level}}
+			{{word.level}}
 		</td>
 		<td class="hidden-xs">
 			{{word.index}}
@@ -58,7 +58,7 @@
 		<td colspan="7">
 			<form class="form-horizontal">
 				<div class="form-group">
-					<label class="col-sm-1 control-label">{{word.Level}}</label>
+					<label class="col-sm-1 control-label">{{word.level}}</label>
 					<label class="col-sm-1 control-label">{{word.index}}</label>
 					<div class="col-sm-2">
 						<input type="text" class="form-control" ng-model="word.word" placeholder="word">

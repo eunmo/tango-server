@@ -3,18 +3,17 @@
 
 	var mongojs = require('mongojs');
 
-	module.exports = function (router, db) {
+	module.exports = function (router, db, mysql) {
 
-		router.put ('/remove/word', function (req, res) {
+		router.put ('/remove/word', async function (req, res) {
 			var input = req.body;
 			
-			db.words.remove(
-				{ _id: mongojs.ObjectId (input._id) },
-				null,
-				function (err, data) {
-					res.sendStatus (200);
-				}
-			);
+			const query = "DELETE FROM words" +
+				" WHERE `level`=\"" + input.level +
+				"\" AND `index`=" + input.index;
+
+			await mysql.promisifyQuery(query);
+			res.sendStatus(200);
 		});
 	};
 }());
