@@ -7,9 +7,7 @@
 	var ejs = require ('ejs');
 	var bodyParser = require ('body-parser');
 	
-	var mongojs = require ('mongojs');
-	var db = mongojs ('tango', ['words']);
-	var routes = require ('./routes/index') (db, 'index');
+	var routes = require ('./routes/index') ('index');
 
 	var app = express ();
 

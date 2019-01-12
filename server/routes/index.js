@@ -6,7 +6,7 @@
   var fs = require ('fs');
 	var mysql = require('../db');
 
-  module.exports = function (db, start) {
+  module.exports = function (start) {
 		var router = express.Router ();
 
 		fs.readdirSync (__dirname)
@@ -14,7 +14,7 @@
 				return (file.indexOf ('.') !== 0) && (file !== 'index.js');
 			})
 		.forEach (function (file) {
-			require (path.join (__dirname, file)) (router, db, mysql);
+			require (path.join (__dirname, file)) (router, mysql);
 		});
 
 		/* GET home page. */

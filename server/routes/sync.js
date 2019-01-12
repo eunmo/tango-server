@@ -1,14 +1,12 @@
 (function () {
 	'use strict';
 
-	var mongojs = require('mongojs');
-
 	function formatDate(date) {
 		var time = new Date(date);
 		return time.toISOString().slice(0, 19).replace('T', ' ');
 	}
 
-	module.exports = function (router, db, mysql) {
+	module.exports = function (router, mysql) {
 
 		router.put ('/sync', async function (req, res) {
 			var input = req.body;

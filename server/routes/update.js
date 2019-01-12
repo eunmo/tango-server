@@ -1,9 +1,7 @@
 (function () {
 	'use strict';
 
-	var mongojs = require('mongojs');
-
-	module.exports = function (router, db, mysql) {
+	module.exports = function (router, mysql) {
 
 		router.put('/update/word', async function (req, res) {
 			var input = req.body;

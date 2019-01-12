@@ -1,13 +1,11 @@
 (function () {
 	'use strict';
 
-	var mongojs = require('mongojs');
-	
 	function replace(string) {
 		return string.replace(/'/g, "\\\'");
 	}
 
-	module.exports = function (router, db, mysql) {
+	module.exports = function (router, mysql) {
 
 		router.put ('/add/:_level', async function (req, res) {
 			var words = req.body;

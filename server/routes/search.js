@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	module.exports = function (router, db, mysql) {
+	module.exports = function (router, mysql) {
 		
 		router.get ('/search/:_word', function (req, res) {
 			var word = req.params._word;

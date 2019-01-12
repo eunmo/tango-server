@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	module.exports = function (router, db, mysql) {
+	module.exports = function (router, mysql) {
 		router.get ('/meta', function (req, res) {
 			const query = "SELECT `streak`, `lastCorrect`, `learned`, `level` FROM words WHERE `streak` < 11";
 			mysql.jsonQuery(query, res);
