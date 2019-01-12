@@ -326,17 +326,17 @@ tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
 				}
 			}
 			return sum;
+		} else if ($scope.selectedDay !== null) {
+			if ($scope.selectedDay.streaks[streak]) {
+				return $scope.selectedDay.streaks[streak].langs[$scope.selectedLang];
+			}
+			return sum;
 		} else if ($scope.selectedLang !== '') {
 			for (i = 0; i < $scope.meta.length; i++) {
 				if ($scope.meta[i].streaks[streak] &&
 						$scope.meta[i].streaks[streak].langs[$scope.selectedLang]) {
 					sum += $scope.meta[i].streaks[streak].langs[$scope.selectedLang];
 				}
-			}
-			return sum;
-		} else if ($scope.selectedDay !== null) {
-			if ($scope.selectedDay.streaks[streak]) {
-				return $scope.selectedDay.streaks[streak].sum;
 			}
 			return sum;
 		}
