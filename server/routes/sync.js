@@ -20,6 +20,7 @@
 			data.forEach(word => {map[word.level + word.index] = word});
 
 			var updates = [];
+			var learnedCount = 0;
 			input.forEach(word => {
 				if (word.learned === false || word.streak <= 0 || word.level === undefined)
 					return;
@@ -39,12 +40,19 @@
 						", `lastCorrect`=\"" + inputDate +
 						"\" WHERE `level`=\"" + word.level +
 						"\" AND `index`=" + word.index);
+
+					if (word.streak === 11)
+						learnedCount++;
 				}
 			});
 
 			if (updates.length > 0) {
 				await mysql.promisifyQuery(updates.join(';'));
+
+				if (learnedCount > 0)
+					data = await mysql.promisifyQuery(query);
 			}
+				
 			res.json(data);
 		});
 	};
