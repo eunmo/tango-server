@@ -1,522 +1,562 @@
-tangoApp.controller('NavCtrl', function ($rootScope, $scope, $http) {
-	
-	$scope.levels = [];
+tangoApp.controller('NavCtrl', function($rootScope, $scope, $http) {
+  $scope.levels = [];
 
-	var date = new Date();
-	var yymm = date.toISOString().substring(2, 7).replace(/-/g,'');
+  var date = new Date();
+  var yymm = date
+    .toISOString()
+    .substring(2, 7)
+    .replace(/-/g, '');
 
-	while (yymm > '1703') {
-		['E', 'F', 'J'].forEach(lang => {
-			$scope.levels.push(lang + yymm);
-		});
-		date.setMonth(date.getMonth() - 1);
-		yymm = date.toISOString().substring(2, 7).replace(/-/g,'');
-	}
+  while (yymm > '1703') {
+    ['E', 'F', 'J'].forEach(lang => {
+      $scope.levels.push(lang + yymm);
+    });
+    date.setMonth(date.getMonth() - 1);
+    yymm = date
+      .toISOString()
+      .substring(2, 7)
+      .replace(/-/g, '');
+  }
 
-	var i;
-	for (i = 0; i <= 5; i++) {
-		$scope.levels.push('N' + i);
-	}
+  var i;
+  for (i = 0; i <= 5; i++) {
+    $scope.levels.push('N' + i);
+  }
 });
 
-tangoApp.controller('MainCtrl', function ($rootScope, $scope, $http) {
+tangoApp.controller('MainCtrl', function($rootScope, $scope, $http) {
+  $scope.langMetas = [];
 
-	$scope.langMetas = [];
+  $http.get('lang_summary').success(function(data) {
+    var langMap = {};
 
-	$http.get('lang_summary').success(function (data) {
-		var langMap = {};
+    data.forEach(row => {
+      var lang = row.lang;
+      if (langMap[lang] === undefined) {
+        langMap[lang] = { lang: lang, total: 0, learned: 0, newWordCount: 0 };
+      }
+      lang = langMap[lang];
 
-		data.forEach(row => {
-			var lang = row.lang;
-			if (langMap[lang] === undefined) {
-				langMap[lang] = { lang: lang, total: 0, learned : 0, newWordCount: 0  };
-			}
-			lang = langMap[lang];
+      if (row.streak === 0) {
+        lang.newWordCount = row.count;
+      } else if (row.streak === 11) {
+        lang.learned = row.count;
+      }
 
-			if (row.streak === 0) {
-				lang.newWordCount = row.count;
-			} else if (row.streak === 11) {
-				lang.learned = row.count;
-			}
+      lang.total += row.count;
+    });
 
-			lang.total += row.count;
-		});
-		
-		for (i in langMap) {
-			$scope.langMetas.push(langMap[i]);
-		}
-		$scope.langMetas.sort(function(a, b) { return (a.lang < b.lang) ? -1 : 1; });
-	});
+    for (i in langMap) {
+      $scope.langMetas.push(langMap[i]);
+    }
+    $scope.langMetas.sort(function(a, b) {
+      return a.lang < b.lang ? -1 : 1;
+    });
+  });
 });
 
-tangoApp.controller('MetaCtrl', function ($rootScope, $scope, $http) {
+tangoApp.controller('MetaCtrl', function($rootScope, $scope, $http) {
+  $scope.meta = [];
+  $scope.streaks = [];
+  $scope.levels = [];
+  $scope.langs = [];
+  $scope.langMetas = [];
+  $scope.newWordCount = 0;
+  $scope.selectedLevel = '';
+  $scope.selectedLang = '';
+  $scope.selectedDay = null;
 
-	$scope.meta = [];
-	$scope.streaks = [];
-	$scope.levels = [];	
-	$scope.langs = [];
-	$scope.langMetas = [];
-	$scope.newWordCount = 0;
-	$scope.selectedLevel = '';
-	$scope.selectedLang = '';
-	$scope.selectedDay = null;
+  function fixDate(date, streak) {
+    var baseDate = new Date(date);
+    var dateOffset = baseDate.getDate() + streak;
 
-	function fixDate (date, streak) {
-		var baseDate = new Date(date);
-		var dateOffset = baseDate.getDate() + streak;
+    if (baseDate.getHours() < 5) {
+      dateOffset -= 1;
+    }
 
-		if (baseDate.getHours() < 5) {
-			dateOffset -= 1;
-		}
+    baseDate.setDate(dateOffset);
+    return new Date(
+      baseDate.getFullYear(),
+      baseDate.getMonth(),
+      baseDate.getDate()
+    );
+  }
 
-		baseDate.setDate(dateOffset);
-		return new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-	}
+  function getLang(level) {
+    var head = level.charAt(0);
+    var lang;
 
-	function getLang (level) {
-		var head = level.charAt(0);
-		var lang;
+    switch (head) {
+      case 'N':
+        lang = 'J';
+        break;
 
-		switch (head) {
-			case 'N':
-				lang = 'J';
-				break;
+      default:
+        lang = head;
+        break;
+    }
 
-			default:
-				lang = head;
-				break;
-		}
+    return lang;
+  }
 
-		return lang;
-	}
+  $http.get('meta').success(function(data) {
+    var i, j;
+    var now = new Date();
+    var newDate, streaks;
 
-	$http.get('meta').success(function (data) {
-		var i, j;
-		var now = new Date();
-		var newDate, streaks;
+    for (i = 0; i <= 10; i++) {
+      newDate = fixDate(new Date(now), 0);
+      newDate.setDate(newDate.getDate() + i);
+      streaks = [];
 
-		for (i = 0; i <= 10; i++) {
-			newDate = fixDate(new Date(now), 0);
-			newDate.setDate(newDate.getDate() + i);
-			streaks = [];
+      for (j = 0; j < Math.min(10, 11 - i); j++) {
+        streaks.push({ sum: 0, levels: {}, langs: { E: 0, F: 0, J: 0 } });
+      }
 
-			for (j = 0; j < Math.min(10, 11 - i); j++) {
-				streaks.push({ sum: 0, levels: {}, langs: { E: 0, F: 0, J: 0 }});
-			}
+      $scope.meta[i] = {
+        date: newDate,
+        streaks: streaks,
+        sum: 0
+      };
+    }
 
-			$scope.meta[i] = {
-				date: newDate,
-				streaks: streaks,
-				sum: 0
-			};
-		}
-	
-		for (i = 0; i < 10; i++) {
-			$scope.streaks[i] = 0;
-		}
+    for (i = 0; i < 10; i++) {
+      $scope.streaks[i] = 0;
+    }
 
-		var row, streak, testDay, index, lang;
-		for (i in data) {
-			row = data[i];
-			streak = Math.max(row.streak, 1);
-			testDay = fixDate(row.lastCorrect, streak);
-			now = fixDate(new Date(), 0);
-			index = Math.max((testDay - now) / 86400000, 0);
+    var row, streak, testDay, index, lang;
+    for (i in data) {
+      row = data[i];
+      streak = Math.max(row.streak, 1);
+      testDay = fixDate(row.lastCorrect, streak);
+      now = fixDate(new Date(), 0);
+      index = Math.max((testDay - now) / 86400000, 0);
 
-			$scope.streaks[10 - streak] += 1;
-			$scope.meta[index].streaks[10 - streak].sum += 1;
-			$scope.meta[index].sum += 1;
+      $scope.streaks[10 - streak] += 1;
+      $scope.meta[index].streaks[10 - streak].sum += 1;
+      $scope.meta[index].sum += 1;
 
-			if ($scope.meta[index].streaks[10 - streak].levels[row.level] === undefined) {
-				$scope.meta[index].streaks[10 - streak].levels[row.level] = 0;
-			}
+      if (
+        $scope.meta[index].streaks[10 - streak].levels[row.level] === undefined
+      ) {
+        $scope.meta[index].streaks[10 - streak].levels[row.level] = 0;
+      }
 
-			$scope.meta[index].streaks[10 - streak].levels[row.level] += 1;
+      $scope.meta[index].streaks[10 - streak].levels[row.level] += 1;
 
-			lang = getLang(row.level);
-			$scope.meta[index].streaks[10 - streak].langs[lang] += 1;
-		}
-	});
+      lang = getLang(row.level);
+      $scope.meta[index].streaks[10 - streak].langs[lang] += 1;
+    }
+  });
 
-	$http.get('level_summary').success(function (data) {
-		var i, j;
-		var row;
-		var levels = {};
-		var level;
-		for (i in data) {
-			row = data[i];
-			if (levels[row.level] === undefined) {
-				level = { name: row.level, streaks: [], learned: 0, total: 0, newWordCount: 0 };
+  $http.get('level_summary').success(function(data) {
+    var i, j;
+    var row;
+    var levels = {};
+    var level;
+    for (i in data) {
+      row = data[i];
+      if (levels[row.level] === undefined) {
+        level = {
+          name: row.level,
+          streaks: [],
+          learned: 0,
+          total: 0,
+          newWordCount: 0
+        };
 
-				for (j = 0; j < 10; j++) {
-					level.streaks[j] = 0;
-				}
+        for (j = 0; j < 10; j++) {
+          level.streaks[j] = 0;
+        }
 
-				levels[row.level] = level;
-			}
+        levels[row.level] = level;
+      }
 
-			level = levels[row.level];
+      level = levels[row.level];
 
-			if (row.streak > 0) {
-				if (row.streak === 11) {
-					level.learned += row.count;
-				}
-				else {
-					level.streaks[10 - Math.max(row.streak, 1)] += row.count;
-				}
-			}
-			else {
-				level.newWordCount += row.count;
-				$scope.newWordCount += row.count;
-			}
+      if (row.streak > 0) {
+        if (row.streak === 11) {
+          level.learned += row.count;
+        } else {
+          level.streaks[10 - Math.max(row.streak, 1)] += row.count;
+        }
+      } else {
+        level.newWordCount += row.count;
+        $scope.newWordCount += row.count;
+      }
 
-			level.total += row.count;
-		}
+      level.total += row.count;
+    }
 
-		for (i in levels) {
-			$scope.levels.push(levels[i]);
-		}
-		$scope.levels.sort(function(a, b) { return (a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0); });
+    for (i in levels) {
+      $scope.levels.push(levels[i]);
+    }
+    $scope.levels.sort(function(a, b) {
+      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+    });
 
-		var langMap = {};
-		var lang;
-		for (i in $scope.levels) {
-			level = $scope.levels[i];
-			lang = level.name.charAt(0);
+    var langMap = {};
+    var lang;
+    for (i in $scope.levels) {
+      level = $scope.levels[i];
+      lang = level.name.charAt(0);
 
-			if (langMap[lang] === undefined) {
-				langMap[lang] = { lang: lang, levels: [] };
-			}
+      if (langMap[lang] === undefined) {
+        langMap[lang] = { lang: lang, levels: [] };
+      }
 
-			langMap[lang].levels.push(level);
-		}
+      langMap[lang].levels.push(level);
+    }
 
-		for (i in langMap) {
-			$scope.langs.push(langMap[i]);
-		}
-		$scope.langs.sort(function(a, b) { return (a.lang < b.lang) ? -1 : ((a.lang > b.lang) ? 1 : 0); });
-		
-		langMap = {};
-		for (i in $scope.levels) {
-			level = $scope.levels[i];
-			lang = getLang(level.name);
+    for (i in langMap) {
+      $scope.langs.push(langMap[i]);
+    }
+    $scope.langs.sort(function(a, b) {
+      return a.lang < b.lang ? -1 : a.lang > b.lang ? 1 : 0;
+    });
 
-			if (langMap[lang] === undefined) {
-				langMap[lang] = { lang: lang, total: 0, learned : 0, newWordCount: 0  };
-			}
+    langMap = {};
+    for (i in $scope.levels) {
+      level = $scope.levels[i];
+      lang = getLang(level.name);
 
-			langMap[lang].total += level.total;
-			langMap[lang].learned += level.learned;
-			langMap[lang].newWordCount += level.newWordCount;
-		}
+      if (langMap[lang] === undefined) {
+        langMap[lang] = { lang: lang, total: 0, learned: 0, newWordCount: 0 };
+      }
 
-		for (i in langMap) {
-			$scope.langMetas.push(langMap[i]);
-		}
-		$scope.langMetas.sort(function(a, b) { return (a.lang < b.lang) ? -1 : ((a.lang > b.lang) ? 1 : 0); });
-	});
+      langMap[lang].total += level.total;
+      langMap[lang].learned += level.learned;
+      langMap[lang].newWordCount += level.newWordCount;
+    }
 
-	$scope.clearSelected = function () {
-		$scope.selectedLevel = '';
-		$scope.selectedLang = '';
-		$scope.selectedDay = null;
-	};
+    for (i in langMap) {
+      $scope.langMetas.push(langMap[i]);
+    }
+    $scope.langMetas.sort(function(a, b) {
+      return a.lang < b.lang ? -1 : a.lang > b.lang ? 1 : 0;
+    });
+  });
 
-	$scope.selectLevel = function (level) {
-		var selectedLevel = $scope.selectedLevel;
-		$scope.clearSelected();
-		if (selectedLevel !== level) {
-			$scope.selectedLevel = level;
-		}
-	};
-	
-	$scope.selectLang = function (lang) {
-		var selectedLang = $scope.selectedLang;
-		$scope.clearSelected();
-		if (selectedLang !== lang) {
-			$scope.selectedLang = lang;
-		}
-	};
-	
-	$scope.selectDay = function (day) {
-		if ($scope.selectedLang === '')
-			return;
+  $scope.clearSelected = function() {
+    $scope.selectedLevel = '';
+    $scope.selectedLang = '';
+    $scope.selectedDay = null;
+  };
 
-		$scope.selectedDay = day;
-	};
+  $scope.selectLevel = function(level) {
+    var selectedLevel = $scope.selectedLevel;
+    $scope.clearSelected();
+    if (selectedLevel !== level) {
+      $scope.selectedLevel = level;
+    }
+  };
 
-	$scope.filter = function (level) {
-		if ($scope.selectedLevel !== '') {
-			if ($scope.selectedLevel !== level.name)
-				return false;
-		} else if ($scope.selectedLang !== '') {
-			if ($scope.selectedLang !== getLang(level.name))
-				return false;
-		} else {
-			return false;
-		}
+  $scope.selectLang = function(lang) {
+    var selectedLang = $scope.selectedLang;
+    $scope.clearSelected();
+    if (selectedLang !== lang) {
+      $scope.selectedLang = lang;
+    }
+  };
 
-		return true;
-	};
+  $scope.selectDay = function(day) {
+    if ($scope.selectedLang === '') return;
 
-	$scope.getFilteredStreak = function (level, index) {
-		if ($scope.selectedDay !== null) {
-			if ($scope.selectedDay.streaks[index] &&
-					$scope.selectedDay.streaks[index].levels[level.name]) {
-				return $scope.selectedDay.streaks[index].levels[level.name];
-			}
-			return 0;
-		}
+    $scope.selectedDay = day;
+  };
 
-		return level.streaks[index];
-	};
+  $scope.filter = function(level) {
+    if ($scope.selectedLevel !== '') {
+      if ($scope.selectedLevel !== level.name) return false;
+    } else if ($scope.selectedLang !== '') {
+      if ($scope.selectedLang !== getLang(level.name)) return false;
+    } else {
+      return false;
+    }
 
-	$scope.getSelectedSumUH = function (level) {
-		var sum = 0;
-		var i;
+    return true;
+  };
 
-		if ($scope.selectedDay !== null) {
-			var day = $scope.selectedDay;
-			for (i = 0; i < day.streaks.length; i++) {
-				if (day.streaks[i].levels[level.name]) {
-					sum += day.streaks[i].levels[level.name];
-				}
-			}
-			return sum;
-		}
+  $scope.getFilteredStreak = function(level, index) {
+    if ($scope.selectedDay !== null) {
+      if (
+        $scope.selectedDay.streaks[index] &&
+        $scope.selectedDay.streaks[index].levels[level.name]
+      ) {
+        return $scope.selectedDay.streaks[index].levels[level.name];
+      }
+      return 0;
+    }
 
-		return level.total - level.learned;
-	}
+    return level.streaks[index];
+  };
 
-	$scope.getSelectedSumLH = function (day) {
-		var sum = 0;
-		var i;
-		
-		if (day === null)
-			return 0;
+  $scope.getSelectedSumUH = function(level) {
+    var sum = 0;
+    var i;
 
-		if ($scope.selectedLevel !== '') {
-			for (i = 0; i < day.streaks.length; i++) {
-				if (day.streaks[i].levels[$scope.selectedLevel]) {
-					sum += day.streaks[i].levels[$scope.selectedLevel];
-				}
-			}
-			return sum;
-		} else if ($scope.selectedLang !== '') {
-			for (i = 0; i < day.streaks.length; i++) {
-				if (day.streaks[i].langs[$scope.selectedLang]) {
-					sum += day.streaks[i].langs[$scope.selectedLang];
-				}
-			}
-			return sum;
-		}
+    if ($scope.selectedDay !== null) {
+      var day = $scope.selectedDay;
+      for (i = 0; i < day.streaks.length; i++) {
+        if (day.streaks[i].levels[level.name]) {
+          sum += day.streaks[i].levels[level.name];
+        }
+      }
+      return sum;
+    }
 
-		return day.sum;
-	}
+    return level.total - level.learned;
+  };
 
-	$scope.getSelectedSumV = function (streak) {
-		var sum = 0;
-		var i;
+  $scope.getSelectedSumLH = function(day) {
+    var sum = 0;
+    var i;
 
-		if ($scope.selectedLevel !== '') {
-			for (i = 0; i < $scope.meta.length; i++) {
-				if ($scope.meta[i].streaks[streak] &&
-						$scope.meta[i].streaks[streak].levels[$scope.selectedLevel]) {
-					sum += $scope.meta[i].streaks[streak].levels[$scope.selectedLevel];
-				}
-			}
-			return sum;
-		} else if ($scope.selectedDay !== null) {
-			if ($scope.selectedDay.streaks[streak]) {
-				return $scope.selectedDay.streaks[streak].langs[$scope.selectedLang];
-			}
-			return sum;
-		} else if ($scope.selectedLang !== '') {
-			for (i = 0; i < $scope.meta.length; i++) {
-				if ($scope.meta[i].streaks[streak] &&
-						$scope.meta[i].streaks[streak].langs[$scope.selectedLang]) {
-					sum += $scope.meta[i].streaks[streak].langs[$scope.selectedLang];
-				}
-			}
-			return sum;
-		}
+    if (day === null) return 0;
 
-		return $scope.streaks[streak];
-	}
+    if ($scope.selectedLevel !== '') {
+      for (i = 0; i < day.streaks.length; i++) {
+        if (day.streaks[i].levels[$scope.selectedLevel]) {
+          sum += day.streaks[i].levels[$scope.selectedLevel];
+        }
+      }
+      return sum;
+    } else if ($scope.selectedLang !== '') {
+      for (i = 0; i < day.streaks.length; i++) {
+        if (day.streaks[i].langs[$scope.selectedLang]) {
+          sum += day.streaks[i].langs[$scope.selectedLang];
+        }
+      }
+      return sum;
+    }
 
-	$scope.getUpperColor = function (level, streak) {
-		var r, g, b;
-		r = g = b = 255;
+    return day.sum;
+  };
 
-		var lang = level.name.charAt(0);
-		switch (lang) {
-			case 'N':
-			case 'J':
-				g -= streak;
-				b -= streak;
-				break;
+  $scope.getSelectedSumV = function(streak) {
+    var sum = 0;
+    var i;
 
-			case 'F':
-				r -= streak;
-				g -= streak;
-				break;
+    if ($scope.selectedLevel !== '') {
+      for (i = 0; i < $scope.meta.length; i++) {
+        if (
+          $scope.meta[i].streaks[streak] &&
+          $scope.meta[i].streaks[streak].levels[$scope.selectedLevel]
+        ) {
+          sum += $scope.meta[i].streaks[streak].levels[$scope.selectedLevel];
+        }
+      }
+      return sum;
+    } else if ($scope.selectedDay !== null) {
+      if ($scope.selectedDay.streaks[streak]) {
+        return $scope.selectedDay.streaks[streak].langs[$scope.selectedLang];
+      }
+      return sum;
+    } else if ($scope.selectedLang !== '') {
+      for (i = 0; i < $scope.meta.length; i++) {
+        if (
+          $scope.meta[i].streaks[streak] &&
+          $scope.meta[i].streaks[streak].langs[$scope.selectedLang]
+        ) {
+          sum += $scope.meta[i].streaks[streak].langs[$scope.selectedLang];
+        }
+      }
+      return sum;
+    }
 
-			case 'E':
-				r -= streak;
-				b -= streak;
-				break;
-			
-			default:
-				break;
-		}
+    return $scope.streaks[streak];
+  };
 
-		var css = 'background-color: rgb(' + r + ',' + g + ',' + b + ')';
+  $scope.getUpperColor = function(level, streak) {
+    var r, g, b;
+    r = g = b = 255;
 
-		if (streak >= 128) {
-			css += '; color: white';
-		}
+    var lang = level.name.charAt(0);
+    switch (lang) {
+      case 'N':
+      case 'J':
+        g -= streak;
+        b -= streak;
+        break;
 
-		return css;
-	};
+      case 'F':
+        r -= streak;
+        g -= streak;
+        break;
+
+      case 'E':
+        r -= streak;
+        b -= streak;
+        break;
+
+      default:
+        break;
+    }
+
+    var css = 'background-color: rgb(' + r + ',' + g + ',' + b + ')';
+
+    if (streak >= 128) {
+      css += '; color: white';
+    }
+
+    return css;
+  };
 });
 
-tangoApp.controller('WordCtrl', function ($rootScope, $scope, $http, $routeParams) {
+tangoApp.controller('WordCtrl', function(
+  $rootScope,
+  $scope,
+  $http,
+  $routeParams
+) {
+  $scope.selectedLevel = $routeParams.level;
+  $scope.words = [];
+  $scope.orderBy = '';
+  $scope.order = 0;
 
-	$scope.selectedLevel = $routeParams.level;
-	$scope.words = [];
-	$scope.orderBy = '';
-	$scope.order = 0;
+  $http.get('select/' + $routeParams.level).success(function(data) {
+    $scope.words = data;
 
-	$http.get('select/' + $routeParams.level).success(function (data) {
-		$scope.words = data;
+    for (var i in $scope.words) {
+      var word = $scope.words[i];
 
-		for (var i in $scope.words) {
-			var word = $scope.words[i];
+      if (word.streak <= 0) {
+        word.minus = true;
+      } else if (word.streak > 10) {
+        word.done = true;
+      }
+    }
+  });
 
-			if (word.streak <= 0) {
-				word.minus = true;
-			} else if (word.streak > 10) {
-				word.done = true;
-			}
-		}
-	});
+  $scope.beginEdit = function(word) {
+    word.inEdit = true;
+  };
 
-	$scope.beginEdit = function (word) {
-		word.inEdit = true;
-	};
+  $scope.cancel = function(word) {
+    word.inEdit = false;
+  };
 
-	$scope.cancel = function (word) {
-		word.inEdit = false;
-	};
+  $scope.commit = function(word) {
+    $http.put('update/word', word).then(function(res) {
+      word.inEdit = false;
+    });
+  };
 
-	$scope.commit = function (word) {
-		$http.put('update/word', word)
-		.then(function (res) {
-			word.inEdit = false;
-		});
-	};
-
-	$scope.changeOrderBy = function () {
-		$scope.order = ($scope.order + 1) % 3;
-		if ($scope.order === 0) {
-
-			if ($scope.selectedlevel === 'all') {
-				$scope.orderBy = 'Level, index';
-			} else {
-				$scope.orderBy = 'index';
-			}
-		} else if ($scope.order === 1) {
-			$scope.orderBy = ['-learned', 'streak'];
-		} else {
-			$scope.orderBy = ['-learned', '-streak'];
-		}
-	};
+  $scope.changeOrderBy = function() {
+    $scope.order = ($scope.order + 1) % 3;
+    if ($scope.order === 0) {
+      if ($scope.selectedlevel === 'all') {
+        $scope.orderBy = 'Level, index';
+      } else {
+        $scope.orderBy = 'index';
+      }
+    } else if ($scope.order === 1) {
+      $scope.orderBy = ['-learned', 'streak'];
+    } else {
+      $scope.orderBy = ['-learned', '-streak'];
+    }
+  };
 });
 
-tangoApp.controller('AddCtrl', function ($rootScope, $scope, $http, $location, $routeParams) {
+tangoApp.controller('AddCtrl', function(
+  $rootScope,
+  $scope,
+  $http,
+  $location,
+  $routeParams
+) {
+  $scope.words = [];
+  $scope.lang = $routeParams.lang;
 
-	$scope.words = [];
-	$scope.lang = $routeParams.lang;
+  function getLevelName() {
+    var lang = $scope.lang;
+    var today = new Date();
+    var yymm = today
+      .toISOString()
+      .substring(2, 7)
+      .replace(/-/g, '');
 
-	function getLevelName() {
-		var lang = $scope.lang;
-		var today = new Date();
-		var yymm = today.toISOString().substring(2, 7).replace(/-/g,'');
+    return lang + yymm;
+  }
 
-		return lang + yymm;
-	}
+  $scope.levelName = getLevelName();
 
-	$scope.levelName = getLevelName();
+  $scope.change = function() {
+    $scope.levelName = getLevelName();
+  };
 
-	$scope.change = function () {
-		$scope.levelName = getLevelName();
-	};
-	
-	$scope.newLine = function () {
-		$scope.words.push({ word: '', yomigana: '', meaning: '' });
-	};
+  $scope.newLine = function() {
+    $scope.words.push({ word: '', yomigana: '', meaning: '' });
+  };
 
-	$scope.newLine();
+  $scope.newLine();
 
-	$scope.newWordInput = function (word) {
-		var sqIndex = word.word.indexOf('[');
-		if (sqIndex !== -1) {
-			word.yomigana = word.word.substr(0, sqIndex).trim();
-			word.word = word.word.substr(sqIndex + 1).replace(']', '').trim();
+  $scope.newWordInput = function(word) {
+    var sqIndex = word.word.indexOf('[');
+    if (sqIndex !== -1) {
+      word.yomigana = word.word.substr(0, sqIndex).trim();
+      word.word = word.word
+        .substr(sqIndex + 1)
+        .replace(']', '')
+        .trim();
 
-			if (window.innerWidth > 543)
-				$scope.newWordAdded($scope.words.indexOf(word));
-		}
+      if (window.innerWidth > 543)
+        $scope.newWordAdded($scope.words.indexOf(word));
+    }
 
-		var tbIndex = word.word.indexOf('（');
-		if (tbIndex !== -1) {
-			word.yomigana = word.word.substr(tbIndex + 1).replace('）', '').trim();
-			word.word = word.word.substr(0, tbIndex).replace(' ', '').trim();
+    var tbIndex = word.word.indexOf('（');
+    if (tbIndex !== -1) {
+      word.yomigana = word.word
+        .substr(tbIndex + 1)
+        .replace('）', '')
+        .trim();
+      word.word = word.word
+        .substr(0, tbIndex)
+        .replace(' ', '')
+        .trim();
 
-			if (window.innerWidth > 543)
-				$scope.newWordAdded($scope.words.indexOf(word));
-		}
+      if (window.innerWidth > 543)
+        $scope.newWordAdded($scope.words.indexOf(word));
+    }
 
-		var mdIndex = word.word.lastIndexOf('·');
-		if (mdIndex !== -1) {
-			word.word = word.word.substr(mdIndex + 1).trim();
-		}
+    var mdIndex = word.word.lastIndexOf('·');
+    if (mdIndex !== -1) {
+      word.word = word.word.substr(mdIndex + 1).trim();
+    }
 
-		word.word = word.word.replace('’', '\'');
-	};
+    word.word = word.word.replace('’', "'");
+  };
 
-	$scope.newWordAdded = function (index) {
-		if ($scope.words.length === index + 1) {
-			$scope.newLine();
-		}
-		
-		var word = $scope.words[index];
-		word.meaning = word.meaning.replace(' ⧫ ', ', ');
-	};
+  $scope.newWordAdded = function(index) {
+    if ($scope.words.length === index + 1) {
+      $scope.newLine();
+    }
 
-	$scope.search = function (word) {
-		if ($scope.lang === 'J' && word.yomigana !== '')
-			$scope.word = word.word + '[' + word.yomigana;
-		else
-			$scope.word = word.word;
-	}
+    var word = $scope.words[index];
+    word.meaning = word.meaning.replace(' ⧫ ', ', ');
+  };
 
-	$scope.submit = function () {
-		var words = [];
+  $scope.search = function(word) {
+    if ($scope.lang === 'J' && word.yomigana !== '')
+      $scope.word = word.word + '[' + word.yomigana;
+    else $scope.word = word.word;
+  };
 
-		for (var i in $scope.words) {
-			var word = $scope.words[i];
+  $scope.submit = function() {
+    var words = [];
 
-			if (word.word !== '') {
-				words.push(word);
-			}
-		}
+    for (var i in $scope.words) {
+      var word = $scope.words[i];
 
-		if (words.length > 0) {
-			$http.put('add/' + $scope.levelName, words)
-				.then(function (res) {
-					$location.url('/');
-				});
-		}
-	};
+      if (word.word !== '') {
+        words.push(word);
+      }
+    }
+
+    if (words.length > 0) {
+      $http.put('add/' + $scope.levelName, words).then(function(res) {
+        $location.url('/');
+      });
+    }
+  };
 });

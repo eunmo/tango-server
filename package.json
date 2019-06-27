@@ -13,7 +13,16 @@
     "body-parser": "^1.15.0",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
-    "mysql": "^2.16.0"
+    "husky": "^2.4.1",
+    "lint-staged": "^8.2.1",
+    "mysql": "^2.16.0",
+    "prettier": "^1.18.2"
+  },
+  "lint-staged": {
+    "{server,client}/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -22,5 +31,10 @@
     "gulp-nodemon": "^2.0.6",
     "gulp-watch": "^4.3.5",
     "jshint": "^2.9.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

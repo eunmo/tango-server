@@ -1,28 +1,28 @@
 body {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
 }
 
 .inverted {
-	color: #fff;
-	background-color: #333;
+  color: #fff;
+  background-color: #333;
 }
 
-
 .show-mobile {
-	display: none;
+  display: none;
 }
 
 @media screen and (max-width: 543px) {
-	.Meta-table {
-		font-size: smaller;
-	}
-	
-	.hide-mobile {
-		display: none;
-	}
+  .Meta-table {
+    font-size: smaller;
+  }
 
-	.show-mobile {
-		display: inline;
-	}
+  .hide-mobile {
+    display: none;
+  }
 
+  .show-mobile {
+    display: inline;
+  }
 }
