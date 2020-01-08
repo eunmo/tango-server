@@ -492,7 +492,22 @@ tangoApp.controller('AddCtrl', function(
   $scope.newLine();
 
   $scope.newWordInput = function(word) {
-    ['[]', '（）'].forEach(pattern => {
+    ['[]'].forEach(pattern => {
+      const [open, close] = pattern.split('');
+      var index = word.word.indexOf(open);
+      if (index !== -1) {
+        word.yomigana = word.word
+          .substr(0, index)
+          .replace(/\s/g, '')
+          .trim();
+        word.word = word.word
+          .substr(index + 1)
+          .replace(close, '')
+          .trim();
+      }
+    });
+
+    ['（）'].forEach(pattern => {
       const [open, close] = pattern.split('');
       var index = word.word.indexOf(open);
       if (index !== -1) {
@@ -516,10 +531,6 @@ tangoApp.controller('AddCtrl', function(
   };
 
   $scope.newWordAdded = function(index) {
-    if ($scope.words.length === index + 1) {
-      $scope.newLine();
-    }
-
     var word = $scope.words[index];
     word.meaning = word.meaning.replace(' ⧫ ', ', ');
   };
